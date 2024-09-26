@@ -40,7 +40,11 @@ export default function UserQuickEditForm({currentUser, open, onClose}: Props) {
   const defaultValues = useMemo(
     () => ({
       firstName: currentUser?.first_name || '',
-      lastName: currentUser?.last_name || ''
+      lastName: currentUser?.last_name || '',
+      profile: currentUser?.profile || '',
+      contact: currentUser?.contacts.filter(contact => {
+        contact.email
+      })
     }),
     [currentUser]
   );
@@ -62,7 +66,6 @@ export default function UserQuickEditForm({currentUser, open, onClose}: Props) {
       reset();
       onClose();
       enqueueSnackbar('Update success!');
-      console.info('DATA', data);
     } catch (error) {
       console.error(error);
     }

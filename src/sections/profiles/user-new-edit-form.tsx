@@ -38,7 +38,15 @@ export default function UserNewEditForm({currentUser}: Props) {
     () => ({
       firstName: currentUser?.first_name || '',
       lastName: currentUser?.last_name || '',
-      profile: currentUser?.profile || ''
+      profile: currentUser?.profile || '',
+      email: currentUser?.contacts?.[0]?.email || '',  // Assuming first contact email
+      phoneNumber: currentUser?.contacts?.[0]?.phone || '',  // Assuming first contact phone
+      country: currentUser?.contacts?.[0]?.country || '',
+      city: currentUser?.contacts?.[0]?.city || '',
+      address: currentUser?.contacts?.[0]?.address || '',
+      zipCode: '',  // Add mapping if it exists in IUserItem
+      company: '',  // Add mapping if it exists in IUserItem
+      role: '',  // Add mapping if it exists in IUserItem
     }),
     [currentUser]
   );

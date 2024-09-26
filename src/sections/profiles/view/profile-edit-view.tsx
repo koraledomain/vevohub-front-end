@@ -18,10 +18,10 @@ type Props = {
   id: string;
 };
 
-const ProfileEditPage = ({ id }: Props) => {
+const ProfileEditPage = ({id}: Props) => {
   const settings = useSettingsContext();
 
-  const { data: currentUser, error, isLoading, isFetching } = useQuery<IUserItem>(
+  const {data: currentUser, error, isLoading, isFetching} = useQuery<IUserItem>(
     ['user', id],
     () => fetchUserById(id),
     {
@@ -49,6 +49,7 @@ const ProfileEditPage = ({ id }: Props) => {
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
         heading={`${currentUser?.first_name ?? ''} ${currentUser?.last_name ?? ''}`.trim()}
+        secondHeading={`${currentUser?.profile ?? ''}`.trim()}
         links={[
           {
             name: 'Dashboard',
@@ -58,13 +59,13 @@ const ProfileEditPage = ({ id }: Props) => {
             name: 'Profile',
             href: paths.dashboard.profiles.root,
           },
-          { name: `${currentUser?.first_name ?? ''} ${currentUser?.last_name ?? ''}`.trim() },
+          {name: `${currentUser?.first_name ?? ''} ${currentUser?.last_name ?? ''}`.trim()},
         ]}
         sx={{
-          mb: { xs: 3, md: 5 },
+          mb: {xs: 3, md: 5},
         }}
       />
-      <ListUserForms currentUser={currentUser} />
+      <ListUserForms currentUser={currentUser}/>
     </Container>
   );
 };
