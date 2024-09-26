@@ -92,41 +92,33 @@ export type IUserCard = {
   totalFollowing: number;
 };
 
+export type IContact = {
+  id: string;
+  city: string;
+  country: string | null;
+  email: string;
+  address: string | null;
+  phone: string;
+};
+
+
 export type IUserItem = {
   id: string;
   first_name: string;
   last_name: string;
-  city: string;
-  role: string;
-  email: string;
-  status: string;
-  address: string;
-  country: string;
-  financial_expectations: string
-  avatarUrl: string;
-  phoneNumber: string;
-  isVerified: boolean;
+  profile: string;
+  financial_expectations: string;
+  linkedin_link: string;
+  has_gdpr: boolean;
+  interview_feedback: string | null;
+  trello_id: string | null;
   trello_description: {
     linkedinLink: string;
     beautifiedDescription: string;  // Update this to match the actual structure
   };
-  linkedin_link: string;
-  trelloUrl: string;
+  contacts: IContact[];
+  status?: string
 };
-
-
-export type IApiProfile = {
-  id: number;
-  first_name: string;
-  last_name: string;
-  locationCity: string;
-  profile: string
-  financial_expectations: string | null;
-  contactNo: string;
-  email: string | null;
-  status: string | null;
-  linkedinUrl: string | null;
-}
 
 export type IUserAccount = {
   email: string;

@@ -69,22 +69,17 @@ export default function ListUserForms({currentUser}: Props) {
             id: '',
             first_name: '',
             last_name: '',
-            city: '',
-            role: '',
-            email: '',
-            status: '',
-            address: '',
-            country: '',
+            profile: '',
             financial_expectations: '',
-            avatarUrl: '',
-            phoneNumber: '',
-            isVerified: false,
+            has_gdpr: false,
+            interview_feedback: '',
             trello_description: {
               linkedinLink: '',
               beautifiedDescription: ''
             },
             linkedin_link: '',
-            trelloUrl: ''
+            trello_id: '',
+            contacts: []
           }}// Provide actual posts if available
         />
       )}

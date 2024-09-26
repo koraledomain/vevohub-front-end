@@ -1,7 +1,7 @@
-import {IApiProfile} from "./user";
+import {IUserItem} from "./user";
 
 export type candidatesResponseAPI = {
-  content: IApiProfile[];
+  content: IUserItem[];
   pageNumber: number;
   pageSize: number;
   totalElements: number;

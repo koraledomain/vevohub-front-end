@@ -1,5 +1,5 @@
 import axiosInstance from '../utils/axios';
-import {IUserItem, IApiProfile} from '../types/user';
+import {IUserItem} from '../types/user';
 import {getAccountId} from '../auth/context/jwt/utils';
 import {candidatesResponseAPI} from "../types/candidates";
 
@@ -35,6 +35,26 @@ export async function fetchCandidates(page: number, size: number, profiles: stri
   }
 }
 
+export const createCandidate = async (data: any) => {
+  try {
+    const response = await axiosInstance.post('/create/candidate', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating candidate:', error);
+    throw error;
+  }
+};
+
+export const updateCandidate = async (data: any) => {
+  try {
+    const response = await axiosInstance.post('/create/candidate', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating candidate:', error);
+    throw error;
+  }
+};
+
 export async function fetchRoles(): Promise<string[]> {
   try {
     const response = await axiosInstance.get('http://localhost:8080/candidates/positions');
@@ -45,63 +65,58 @@ export async function fetchRoles(): Promise<string[]> {
   }
 }
 
-export function transformApiDataToUserItems(apiData: IApiProfile[] = []): IUserItem[] {
+export function transformApiDataToUserItems(apiData: IUserItem[] = []) {
   if (!apiData || apiData.length === 0) {
     console.log("apiData is undefined or empty:", apiData);
     return [];
   }
 
-  console.log(apiData);
   return apiData.map(apiUser => ({
     id: apiUser.id.toString(),
-    first_name: `${apiUser.first_name ?? ''}`.trim() || 'First Name Last Name',
-    last_name: `${apiUser.last_name ?? ''}`.trim() || 'First Name Last Name',
-    city: apiUser.locationCity || 'Default City',
-    role: apiUser.profile || 'Default Role',
-    email: apiUser.email || 'no-email@example.com',
-    status: apiUser.status || 'pending',
-    address: 'Default Address',
-    country: 'Default Country',
-    financial_expectations: apiUser.financial_expectations || '?',
-    avatarUrl: 'Default Avatar URL',
-    phoneNumber: apiUser.contactNo,
-    isVerified: true,
+    first_name: `${apiUser.first_name ?? ''}`.trim(),
+    last_name: `${apiUser.last_name ?? ''}`.trim(),
+    profile: apiUser.profile || 'Default Role',
+    financial_expectations: apiUser.financial_expectations || '0',
+    has_gdpr: false, // Default value, you can update this based on actual data
+    interview_feedback: null, // Default value, you can update this based on actual data
+    trello_id: null, // Default value, you can update this based on actual data
+    linkedin_link: apiUser.linkedin_link || '',
     trello_description: {
-      beautifiedDescription: '',
-      linkedinLink: '',
+      linkedinLink: '', // Default value, update based on actual data if available
+      beautifiedDescription: '', // Default value, update based on actual data if available
     },
-    linkedin_link: '',
-    trelloUrl: ''
+    contacts: [], // Default value, assuming contacts is an empty array by default
   }));
 }
+
 
 export const fetchUserById = async (id: string): Promise<IUserItem> => {
   try {
     const response = await axiosInstance.get(`http://localhost:8080/candidates/${id}`);
     const apiUser = response.data;
 
-    console.log('TEST-THIS')
-    console.log(apiUser);
     return {
       id: apiUser.id.toString(),
       first_name: apiUser.first_name || 'First Name',
       last_name: apiUser.last_name || 'Last name ',
-      city: apiUser.locationCity || 'Default City',
-      role: apiUser.profile || 'Default Role',
-      email: apiUser.email || 'no-email@example.com',
-      status: apiUser.status || 'pending',
-      address: 'Default Address', // Placeholder
-      country: 'Default Country', // Placeholder
+      profile: apiUser.profile || 'Default Role',
       financial_expectations: apiUser.financialExpectations || '0',
-      avatarUrl: 'Default Avatar URL', // Placeholder
-      phoneNumber: apiUser.contactNo,
-      isVerified: true,
+      has_gdpr: false,
+      interview_feedback: apiUser.interview_feedback || 'test',
       trello_description: {
         linkedinLink: apiUser.trello_description?.linkedinLink || '',  // Ensure to get it from the correct path
         beautifiedDescription: apiUser.trello_description?.beautifiedDescription || ''  // Ensure to get it from the correct path
       },
+      contacts: apiUser.contacts?.map((contact: any) => ({
+        id: contact.id.toString(),
+        city: contact.city || 'Unknown City',
+        country: contact.country || 'Unknown Country',
+        email: contact.email || 'no-email@example.com',
+        address: contact.address || 'No Address',
+        phone: contact.phone || 'No Phone',
+      })) || [],
       linkedin_link: apiUser.linkedin_link || '',
-      trelloUrl: ''
+      trello_id: ''
     };
   } catch (error) {
     console.error('Error fetching user by ID', error);

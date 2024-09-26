@@ -42,13 +42,11 @@ export default function UserTableRow({
   const {
     first_name,
     last_name,
-    avatarUrl,
-    role,
-    status,
+    profile,
     financial_expectations,
-    isVerified,
+    has_gdpr,
     linkedin_link,
-    trelloUrl
+    trello_id,
   } = row;
 
   const confirm = useBoolean();
@@ -76,10 +74,10 @@ export default function UserTableRow({
             }}
             onClick={handleRowClick}
           >
-            <Avatar alt={first_name} src={avatarUrl} sx={{mr: 2}}/>
+            <Avatar alt={first_name} src={'avatarUrl'} sx={{mr: 2}}/>
             <ListItemText
               primary={`${first_name ?? ''} ${last_name ?? ''}`.trim() || 'Unnamed User'}
-              secondary={role}
+              secondary={profile}
               primaryTypographyProps={{
                 variant: 'body2',
                 sx: { fontWeight: 'normal', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
@@ -87,22 +85,6 @@ export default function UserTableRow({
               secondaryTypographyProps={{ variant: 'caption', color: 'text.disabled' }}
               sx={{ m: 0 }}
             />
-          </ButtonBase>
-        </TableCell>
-
-        <TableCell>
-          <ButtonBase sx={{width: '100%'}} onClick={handleRowClick}>
-            <Label
-              variant="soft"
-              color={
-                (status === 'active' && 'success') ||
-                (status === 'pending' && 'warning') ||
-                (status === 'banned' && 'error') ||
-                'default'
-              }
-            >
-              {status}
-            </Label>
           </ButtonBase>
         </TableCell>
 
@@ -114,14 +96,14 @@ export default function UserTableRow({
 
         <TableCell sx={{whiteSpace: 'nowrap', textAlign: 'left', width: '15%'}}>
           <ButtonBase sx={{width: '100%'}} onClick={handleRowClick}>
-            {isVerified}
+            {has_gdpr}
           </ButtonBase>
         </TableCell>
 
 
         <TableCell>
           <Tooltip title="Trello Card Id Profile" placement="top" arrow>
-            <IconButton component="a" href={trelloUrl} target="_blank" rel="noopener noreferrer">
+            <IconButton component="a" href={`b;bala-${trello_id}`} target="_blank" rel="noopener noreferrer">
               <Iconify icon="mdi:trello"/>
             </IconButton>
           </Tooltip>

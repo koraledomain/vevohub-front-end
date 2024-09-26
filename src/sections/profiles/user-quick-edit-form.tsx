@@ -35,27 +35,12 @@ export default function UserQuickEditForm({currentUser, open, onClose}: Props) {
   const NewUserSchema = Yup.object().shape({
     firstName: Yup.string().required('Name is required'),
     lastName: Yup.string().required('Name is required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
-    country: Yup.string().required('Country is required'),
-    // company: Yup.string().required('Company is required'),
-    // state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-
-    profile: Yup.string().required('Profile is required'),
   });
 
   const defaultValues = useMemo(
     () => ({
       firstName: currentUser?.first_name || '',
-      lastName: currentUser?.last_name || '',
-      email: currentUser?.email || '',
-      phoneNumber: currentUser?.phoneNumber || '',
-      address: currentUser?.address || '',
-      country: currentUser?.country || '',
-      city: currentUser?.city || '',
-      profile: currentUser?.role || '',
+      lastName: currentUser?.last_name || ''
     }),
     [currentUser]
   );

@@ -37,13 +37,22 @@ export default function TrelloInfo({info}: Props) {
         <Stack direction="row" spacing={2}>
           <Iconify icon="mingcute:location-fill" width={24}/>
           <Box sx={{typography: 'body2'}}>
-            Location: {info.country}
+            Location:
+            {info.contacts
+              .filter(contact => contact.country) // Filter contacts that have a country
+              .map((contact, index) => (
+                <span key={index}>{contact.country}</span> // Display each country
+              ))
+            }
           </Box>
         </Stack>
 
         <Stack direction="row" sx={{typography: 'body2'}}>
           <Iconify icon="fluent:mail-24-filled" width={24} sx={{mr: 2}}/>
-          {info.email}
+          {info.contacts.filter(contactEmail => contactEmail.email).map((contact, index) => (
+            <span key={index}>{contact.email}</span> // Display each country
+          ))
+          }
         </Stack>
 
         <Stack direction="row" sx={{typography: 'body2'}}>
