@@ -29,6 +29,7 @@ import { IUserItem, IUserTableFilters, IUserTableFilterValue } from 'src/types/u
 import UserTableRow from '../user-table-row';
 import UserTableToolbar from '../user-table-toolbar';
 import UserTableFiltersResult from '../user-table-filters-result';
+import {useSettingsContext} from "../../../components/settings";
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name' },
@@ -121,6 +122,8 @@ export default function ProfileListView() {
     [enqueueSnackbar, queryClient, tableData, table],
   );
 
+  const settings = useSettingsContext();
+
   const handleDeleteRows = useCallback(() => {
     const updatedData = tableData.filter((row) => !table.selected.includes(row.id));
     enqueueSnackbar('Delete success!');
@@ -144,7 +147,7 @@ export default function ProfileListView() {
   const denseHeight = table.dense ? 56 : 56 + 20;
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
