@@ -10,7 +10,6 @@ export type BreadcrumbsLinkProps = {
 
 export interface CustomBreadcrumbsProps extends BreadcrumbsProps {
   heading?: string;
-  secondHeading?: string;
   moreLink?: string[];
   activeLast?: boolean;
   action?: React.ReactNode;

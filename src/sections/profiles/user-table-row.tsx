@@ -31,6 +31,7 @@ type Props = {
   onDeleteRow: VoidFunction;
 };
 
+
 export default function UserTableRow({
                                        row,
                                        selected,
@@ -39,6 +40,10 @@ export default function UserTableRow({
                                        onDeleteRow,
                                      }: Props) {
   const { first_name, last_name, profile, financial_expectations, has_gdpr, linkedin_link } = row;
+
+  const handleRowClick = () => {
+    onEditRow();
+  };
 
   const confirm = useBoolean();
   const quickEdit = useBoolean();
@@ -51,7 +56,7 @@ export default function UserTableRow({
           <Checkbox checked={selected} onClick={onSelectRow} />
         </TableCell>
 
-        <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+        <TableCell sx={{ display: 'flex', alignItems: 'center' }} onClick={handleRowClick}>
           <Avatar alt={first_name} src={'/path/to/avatar'} sx={{ mr: 2 }} />
           <ListItemText
             primary={`${first_name} ${last_name}`}

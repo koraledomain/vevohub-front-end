@@ -13,7 +13,6 @@ export default function CustomBreadcrumbs({
   links,
   action,
   heading,
-  secondHeading,
   moreLink,
   activeLast,
   sx,
@@ -29,11 +28,6 @@ export default function CustomBreadcrumbs({
           {heading && (
             <Typography variant="h4" gutterBottom>
               {heading}
-            </Typography>
-          )}
-          {secondHeading && (
-            <Typography variant="h4" gutterBottom>
-              {secondHeading}
             </Typography>
           )}
           {/* BREADCRUMBS */}

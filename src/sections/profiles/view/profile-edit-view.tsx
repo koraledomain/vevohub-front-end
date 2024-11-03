@@ -13,6 +13,9 @@ import {IUserItem} from 'src/types/user';
 import {fetchUserById} from "../../../_mock";
 import ListUserForms from "../user-list-form";
 import {queryClient} from "../../../hooks/queryClient";
+import Avatar from "@mui/material/Avatar";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
 type Props = {
   id: string;
@@ -47,9 +50,16 @@ const ProfileEditPage = ({id}: Props) => {
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      <Stack direction="row" alignItems="center" spacing={1}>
+        <Avatar/>
+        <Typography variant="h3">
+          {`${currentUser?.first_name ?? ''} ${currentUser?.last_name ?? ''}`.trim()}
+        </Typography>
+        <Typography variant="h7">
+          {`${currentUser?.profile ?? ''}`.trim()}
+        </Typography>
+      </Stack>
       <CustomBreadcrumbs
-        heading={`${currentUser?.first_name ?? ''} ${currentUser?.last_name ?? ''}`.trim()}
-        secondHeading={`${currentUser?.profile ?? ''}`.trim()}
         links={[
           {
             name: 'Dashboard',
@@ -65,6 +75,7 @@ const ProfileEditPage = ({id}: Props) => {
           mb: {xs: 3, md: 5},
         }}
       />
+
       <ListUserForms currentUser={currentUser}/>
     </Container>
   );
