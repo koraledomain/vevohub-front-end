@@ -11,30 +11,33 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import {IUserItem} from 'src/types/user';
 
 import {fetchUserById} from "../../../_mock";
-import UserNewEditForm from '../user-new-edit-form';
+import ListUserForms from "../user-list-form";
 import {queryClient} from "../../../hooks/queryClient";
+import Avatar from "@mui/material/Avatar";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
 type Props = {
   id: string;
 };
 
-const ProfileEditPage = ({ id }: Props) => {
+const ProfileEditPage = ({id}: Props) => {
   const settings = useSettingsContext();
 
-
-  const { data: currentUser, error, isLoading, isFetching } = useQuery<IUserItem>(
+  const {data: currentUser, error, isLoading, isFetching} = useQuery<IUserItem>(
     ['user', id],
     () => fetchUserById(id),
     {
       staleTime: 4 * 60 * 1000, // 4 minutes
       cacheTime: 4 * 60 * 1000, // 4 minutes
-      initialData: () => 
+      initialData: () =>
         // Provide initial data if available in the cache
-         queryClient.getQueryData<IUserItem>(['user', id])
+        queryClient.getQueryData<IUserItem>(['user', id])
       ,
     }
   );
 
+  console.log("currentUser Data:", currentUser);  // Log the currentUser data
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -47,8 +50,16 @@ const ProfileEditPage = ({ id }: Props) => {
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      <Stack direction="row" alignItems="center" spacing={1}>
+        <Avatar/>
+        <Typography variant="h3">
+          {`${currentUser?.first_name ?? ''} ${currentUser?.last_name ?? ''}`.trim()}
+        </Typography>
+        <Typography variant="h7">
+          {`${currentUser?.profile ?? ''}`.trim()}
+        </Typography>
+      </Stack>
       <CustomBreadcrumbs
-        heading={currentUser?.name}
         links={[
           {
             name: 'Dashboard',
@@ -58,13 +69,14 @@ const ProfileEditPage = ({ id }: Props) => {
             name: 'Profile',
             href: paths.dashboard.profiles.root,
           },
-          { name: currentUser?.name },
+          {name: `${currentUser?.first_name ?? ''} ${currentUser?.last_name ?? ''}`.trim()},
         ]}
         sx={{
-          mb: { xs: 3, md: 5 },
+          mb: {xs: 3, md: 5},
         }}
       />
-      <UserNewEditForm currentUser={currentUser} />
+
+      <ListUserForms currentUser={currentUser}/>
     </Container>
   );
 };

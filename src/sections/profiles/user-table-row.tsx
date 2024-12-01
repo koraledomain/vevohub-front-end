@@ -8,7 +8,6 @@ import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
-import ButtonBase from '@mui/material/ButtonBase';
 import ListItemText from '@mui/material/ListItemText';
 
 import { useBoolean } from 'src/hooks/use-boolean';
@@ -32,6 +31,7 @@ type Props = {
   onDeleteRow: VoidFunction;
 };
 
+
 export default function UserTableRow({
                                        row,
                                        selected,
@@ -39,15 +39,15 @@ export default function UserTableRow({
                                        onSelectRow,
                                        onDeleteRow,
                                      }: Props) {
-  const { name, avatarUrl, profile, status, email, phoneNumber, linkedinUrl } = row;
-
-  const confirm = useBoolean();
-  const quickEdit = useBoolean();
-  const popover = usePopover();
+  const { first_name, last_name, profile, financial_expectations, has_gdpr, linkedin_link } = row;
 
   const handleRowClick = () => {
     onEditRow();
   };
+
+  const confirm = useBoolean();
+  const quickEdit = useBoolean();
+  const popover = usePopover();
 
   return (
     <>
@@ -56,51 +56,23 @@ export default function UserTableRow({
           <Checkbox checked={selected} onClick={onSelectRow} />
         </TableCell>
 
-        <TableCell>
-          <ButtonBase sx={{ display: 'flex', alignItems: 'center', width: '100%' }} onClick={handleRowClick}>
-            <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} />
-            <ListItemText
-              primary={name}
-              secondary={email}
-              primaryTypographyProps={{ variant: 'body2', sx: { fontWeight: 'normal' } }}
-              secondaryTypographyProps={{ variant: 'caption', color: 'text.disabled' }}
-              sx={{ m: 0 }}
-            />
-          </ButtonBase>
+        <TableCell sx={{ display: 'flex', alignItems: 'center' }} onClick={handleRowClick}>
+          <Avatar alt={first_name} src={'/path/to/avatar'} sx={{ mr: 2 }} />
+          <ListItemText
+            primary={`${first_name} ${last_name}`}
+            secondary={profile}
+            primaryTypographyProps={{ variant: 'body2' }}
+            secondaryTypographyProps={{ color: 'text.disabled' }}
+          />
         </TableCell>
 
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{financial_expectations}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>
-          <ButtonBase sx={{ width: '100%' }} onClick={handleRowClick}>
-            {phoneNumber}
-          </ButtonBase>
-        </TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{has_gdpr ? 'Yes' : 'No'}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>
-          <ButtonBase sx={{ width: '100%' }} onClick={handleRowClick}>
-            {profile}
-          </ButtonBase>
-        </TableCell>
-
-        <TableCell>
-          <ButtonBase sx={{ width: '100%' }} onClick={handleRowClick}>
-            <Label
-              variant="soft"
-              color={
-                (status === 'active' && 'success') ||
-                (status === 'pending' && 'warning') ||
-                (status === 'banned' && 'error') ||
-                'default'
-              }
-            >
-              {status}
-            </Label>
-          </ButtonBase>
-        </TableCell>
-
-        <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>
+        <TableCell align="center">
           <Tooltip title="LinkedIn Profile" placement="top" arrow>
-            <IconButton component="a" href={linkedinUrl} target="_blank" rel="noopener noreferrer">
+            <IconButton component="a" href={linkedin_link} target="_blank" rel="noopener noreferrer">
               <Iconify icon="mdi:linkedin" />
             </IconButton>
           </Tooltip>

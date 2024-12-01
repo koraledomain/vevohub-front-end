@@ -30,7 +30,6 @@ export default function CustomBreadcrumbs({
               {heading}
             </Typography>
           )}
-
           {/* BREADCRUMBS */}
           {!!links.length && (
             <Breadcrumbs separator={<Separator />} {...other}>
