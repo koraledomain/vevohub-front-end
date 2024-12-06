@@ -55,7 +55,7 @@ const ProfileEditPage = ({id}: Props) => {
         <Typography variant="h3">
           {`${currentUser?.first_name ?? ''} ${currentUser?.last_name ?? ''}`.trim()}
         </Typography>
-        <Typography variant="h7">
+        <Typography variant="h4">
           {`${currentUser?.profile ?? ''}`.trim()}
         </Typography>
       </Stack>

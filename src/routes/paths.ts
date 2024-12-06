@@ -26,6 +26,11 @@ export const paths = {
       new: `${ROOTS.DASHBOARD}/profiles/new`,
       edit: (id: string) => `${ROOTS.DASHBOARD}/profiles/${id}/edit`,
     },
+    gdpr: {
+      root: `${ROOTS.DASHBOARD}/gdpr`,
+      builder: `${ROOTS.DASHBOARD}/gdpr/form-builder`,
+      generated: `${ROOTS.DASHBOARD}/gdpr/generated-form`,
+    },
     two: `${ROOTS.DASHBOARD}/gdpr`,
     reporting: `${ROOTS.DASHBOARD}/reporting`,
     group: {

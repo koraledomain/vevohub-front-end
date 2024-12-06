@@ -54,12 +54,25 @@ export function useNavData() {
           {title: 'profiles', path: paths.dashboard.root, icon: ICONS.dashboard},
           {title: 'jobs', path: paths.dashboard.two, icon: ICONS.job},
           {
-            title: 'GDPR', path: paths.dashboard.two, icon: ICONS.ecommerce
-          },
-          {
             title: 'Reporting',
             path: paths.dashboard.reporting,
             icon: ICONS.analytics,
+          },
+        ],
+      },
+      // MANAGEMENT
+      // ----------------------------------------------------------------------
+      {
+        subheader: 'gdpr',
+        items: [
+          {
+            title: 'gdpr',
+            path: paths.dashboard.gdpr.root,
+            icon: ICONS.job,
+            children: [
+              { title: 'builder', path: paths.dashboard.gdpr.builder },
+              { title: 'generated', path: paths.dashboard.gdpr.generated },
+            ],
           },
         ],
       },
