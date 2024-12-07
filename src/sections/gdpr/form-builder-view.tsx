@@ -1,24 +1,27 @@
 import React, {useCallback, useState} from 'react';
 import {Box, Button, Card, Stack, Typography} from '@mui/material';
 import {FormProvider, useForm} from 'react-hook-form';
-import {DndProvider, useDrag, useDrop} from 'react-dnd';
-import {RHFUploadAvatar} from '../../components/hook-form';
+import {useDrag, useDrop, DndProvider} from 'react-dnd';
+import {HTML5Backend} from 'react-dnd-html5-backend';
+import {RHFTextField, RHFUploadAvatar} from '../../components/hook-form';
+import Iconify from '../../components/iconify';
 import {fData} from '../../utils/format-number';
-import {HTML5Backend} from "react-dnd-html5-backend";
 
 // Define type for form components
 type FormComponent = {
-  id: string;
+  id: string; // Unique ID for drag-and-drop
   type: 'text' | 'textarea' | 'autocomplete' | 'checkbox';
   name: string;
   label: string;
-  placeholder?: string;
+  placeholder?: string; // Optional for checkboxes
 };
 
 export default function FormBuilder() {
+  // State for managing dynamic components and logo
   const [formConfig, setFormConfig] = useState<FormComponent[]>([]);
   const [logo, setLogo] = useState<File | string | null>(null);
 
+  // Predefined components in the toolbox
   const toolboxComponents: FormComponent[] = [
     {
       id: 'text-1',
@@ -51,6 +54,7 @@ export default function FormBuilder() {
 
   const methods = useForm();
 
+  // Delete a specific component
   const handleDeleteComponent = (index: number) => {
     setFormConfig((prevConfig) => prevConfig.filter((_, i) => i !== index));
   };
@@ -63,26 +67,14 @@ export default function FormBuilder() {
 
       reader.onloadend = () => {
         const base64data = reader.result;
+        console.log(base64data);
         methods.setValue('photoURL', base64data, { shouldValidate: true });
       };
       reader.readAsDataURL(file);
     }
   }, []);
 
-  const handleDrop = (item: FormComponent) => {
-    const newComponent = { ...item, id: `${Date.now()}` };
-    setFormConfig((prev) => [...prev, newComponent]);
-  };
-
-  const moveComponent = (dragIndex: number, hoverIndex: number) => {
-    setFormConfig((prevConfig) => {
-      const updatedConfig = [...prevConfig];
-      const [movedItem] = updatedConfig.splice(dragIndex, 1);
-      updatedConfig.splice(hoverIndex, 0, movedItem);
-      return updatedConfig;
-    });
-  };
-
+  // Submit form configuration
   const handleSubmitForm = () => {
     const formData = {
       logo,
@@ -92,14 +84,24 @@ export default function FormBuilder() {
     alert('Form submitted successfully!');
   };
 
+  // Drop handler
+  const handleDrop = (item: FormComponent) => {
+    const newComponent = {...item, id: `${Date.now()}`};
+    setFormConfig((prev) => [...prev, newComponent]);
+  };
+
   return (
     <FormProvider {...methods}>
       <DndProvider backend={HTML5Backend}>
-        <Box sx={{ padding: 4 }}>
-          <Typography variant="h4" sx={{ marginBottom: 3 }}>
+        <Box sx={{padding: 4}}>
+          <Typography variant="h4" sx={{marginBottom: 3}}>
             Drag-and-Drop Form Builder
           </Typography>
 
+          {/* Upload Logo */}
+
+
+          {/* Drag-and-Drop Context */}
           <Stack direction="row" spacing={4}>
             {/* Toolbox */}
             <Box
@@ -112,7 +114,7 @@ export default function FormBuilder() {
             >
               <Typography variant="h6">Toolbox</Typography>
               {toolboxComponents.map((component) => (
-                <DraggableComponent key={component.id} component={component} />
+                <DraggableComponent key={component.id} component={component}/>
               ))}
             </Box>
 
@@ -127,11 +129,11 @@ export default function FormBuilder() {
                 backgroundColor: '#f9f9f9',
               }}
             >
-              <Typography variant="h6" sx={{ marginBottom: 2 }}>
+              <Typography variant="h6" sx={{marginBottom: 2}}>
                 Live Preview
               </Typography>
-              <Card sx={{ padding: 3, marginBottom: 3 }}>
-                <Typography variant="h6" sx={{ marginBottom: 2 }}>
+              <Card sx={{padding: 3, marginBottom: 3}}>
+                <Typography variant="h6" sx={{marginBottom: 2}}>
                   Upload Logo
                 </Typography>
                 <RHFUploadAvatar
@@ -150,21 +152,61 @@ export default function FormBuilder() {
                       }}
                     >
                       Allowed *.jpeg, *.jpg, *.png, *.gif
-                      <br /> max size of {fData(3145728)}
+                      <br/> max size of {fData(3145728)}
                     </Typography>
                   }
                 />
               </Card>
-              <DroppableArea
-                components={formConfig}
-                onDrop={handleDrop}
-                moveComponent={moveComponent}
-                handleDelete={handleDeleteComponent}
-              />
+              <DroppableArea onDrop={handleDrop}>
+                {formConfig.map((component, index) => (
+                  <Card
+                    key={component.id}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 2,
+                      padding: 2,
+                      border: '1px solid #ccc',
+                      borderRadius: '8px',
+                      marginBottom: 2,
+                    }}
+                  >
+                    <Box flex={1}>
+                      {/* Render Dynamic Components */}
+                      {component.type === 'textarea' && (
+                        <RHFTextField
+                          name={`textarea_${component.id}`} // Unique name for each textarea
+                          label={component.label}
+                          placeholder={component.placeholder}
+                          multiline
+                          rows={4}
+                        />
+                      )}
+                      {component.type === 'text' && (
+                        <RHFTextField
+                          name={`text_${component.id}`} // Unique name for each text field
+                          label={component.label}
+                          placeholder={component.placeholder}
+                        />
+                      )}
+                    </Box>
+
+                    {/* Delete Button */}
+                    <Button
+                      startIcon={<Iconify icon="solar:trash-bin-trash-bold"/>}
+                      color="error"
+                      onClick={() => handleDeleteComponent(index)}
+                    >
+                      Delete
+                    </Button>
+                  </Card>
+                ))}
+              </DroppableArea>
             </Box>
           </Stack>
 
-          <Button variant="contained" color="primary" sx={{ marginTop: 3 }} onClick={handleSubmitForm}>
+          {/* Submit Button */}
+          <Button variant="contained" color="primary" sx={{marginTop: 3}} onClick={handleSubmitForm}>
             Submit Form
           </Button>
         </Box>
@@ -173,8 +215,8 @@ export default function FormBuilder() {
   );
 }
 
-function DraggableComponent({ component }: { component: FormComponent }) {
-  const [{ isDragging }, drag] = useDrag({
+function DraggableComponent({component}: { component: FormComponent }) {
+  const [{isDragging}, drag] = useDrag({
     type: 'FORM_COMPONENT',
     item: component,
     collect: (monitor) => ({
@@ -183,7 +225,7 @@ function DraggableComponent({ component }: { component: FormComponent }) {
   });
 
   return (
-    <div ref={drag} style={{ opacity: isDragging ? 0.5 : 1 }}>
+    <div ref={drag} style={{opacity: isDragging ? 0.5 : 1}}>
       <Card
         sx={{
           padding: 2,
@@ -200,93 +242,27 @@ function DraggableComponent({ component }: { component: FormComponent }) {
   );
 }
 
-function DroppableArea({
-                         components,
-                         onDrop,
-                         moveComponent,
-                         handleDelete,
-                       }: {
-  components: FormComponent[];
-  onDrop: (item: FormComponent) => void;
-  moveComponent: (dragIndex: number, hoverIndex: number) => void;
-  handleDelete: (index: number) => void;
-}) {
-  return (
-    <Box>
-      {components.map((component, index) => (
-        <DroppableComponent
-          key={component.id}
-          component={component}
-          index={index}
-          moveComponent={moveComponent}
-          handleDelete={handleDelete}
-        />
-      ))}
-    </Box>
-  );
-}
-
-function DroppableComponent({
-                              component,
-                              index,
-                              moveComponent,
-                              handleDelete,
-                            }: {
-  component: FormComponent;
-  index: number;
-  moveComponent: (dragIndex: number, hoverIndex: number) => void;
-  handleDelete: (index: number) => void;
-}) {
-  const ref = React.useRef<HTMLDivElement>(null);
-
-  const [{ handlerId }, drop] = useDrop({
+function DroppableArea({onDrop, children}: { onDrop: (item: FormComponent) => void; children: React.ReactNode }) {
+  const [{isOver}, drop] = useDrop({
     accept: 'FORM_COMPONENT',
+    drop: (item: FormComponent) => onDrop(item),
     collect: (monitor) => ({
-      handlerId: monitor.getHandlerId(),
-    }),
-    hover: (item: { index: number }) => {
-      if (!ref.current) return;
-
-      const dragIndex = item.index;
-      const hoverIndex = index;
-
-      if (dragIndex === hoverIndex) return;
-
-      moveComponent(dragIndex, hoverIndex);
-      item.index = hoverIndex;
-    },
-  });
-
-  const [{ isDragging }, drag] = useDrag({
-    type: 'FORM_COMPONENT',
-    item: { id: component.id, index },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
+      isOver: monitor.isOver(),
     }),
   });
-
-  drag(drop(ref));
 
   return (
-    <div
-      ref={ref}
-      style={{
-        opacity: isDragging ? 0.5 : 1,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        padding: 8,
-        margin: '4px 0',
-        border: '1px solid #ccc',
-        borderRadius: 8,
-        background: '#f9f9f9',
+    <Box
+      ref={drop}
+      sx={{
+        padding: 2,
+        border: '1px dashed #ccc',
+        borderRadius: 4,
+        minHeight: 300,
+        backgroundColor: isOver ? '#e0f7fa' : undefined,
       }}
-      data-handler-id={handlerId}
     >
-      <Typography>{component.label}</Typography>
-      <Button color="error" onClick={() => handleDelete(index)}>
-        Delete
-      </Button>
-    </div>
+      {children}
+    </Box>
   );
 }
