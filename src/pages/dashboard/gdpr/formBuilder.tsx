@@ -1,11 +1,9 @@
-import { Helmet } from 'react-helmet-async';
-
-import GdprView from 'src/sections/gdpr/gdprview';
+import {Helmet} from 'react-helmet-async';
 import FormBuilderView from "../../../sections/gdpr/form-builder-view";
 
 // ----------------------------------------------------------------------
 
-export default function Formbuilder() {
+export default function FormBuilder() {
   return (
     <>
       <Helmet>
