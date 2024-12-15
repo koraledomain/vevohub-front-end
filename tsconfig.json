@@ -31,7 +31,9 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "../src/**/*"
+    "../src/**/*",
+    "node_modules/pdf-lib/ts3.4/apps/deno/dummy.d.ts",
+    "node_modules/pdf-lib/ts3.4/apps/deno/dummy.d.ts"
   ],
   "references": [
     {

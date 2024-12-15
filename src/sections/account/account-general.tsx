@@ -105,7 +105,7 @@ export default function AccountGeneral() {
       reader.readAsDataURL(file);
     }
   }, [setValue]);
-
+//
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
