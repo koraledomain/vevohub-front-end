@@ -20,7 +20,7 @@ import { getAccountId } from '../auth/context/jwt/utils';
 
 export async function fetchUser() {
   try {
-    const response = await axiosInstance.get(`http://localhost:8080/users/${getAccountId()}`);
+    const response = await axiosInstance.get(`https://decorous-volcano-production.up.railway.app/users/${getAccountId()}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching data', error);

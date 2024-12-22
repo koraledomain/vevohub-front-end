@@ -27,7 +27,7 @@ export async function fetchCandidates(page: number, size: number, profiles: stri
       params.fullNameCandidate = fullNameCandidate;
     }
 
-    const response = await axiosInstance.get<candidatesResponseAPI>('http://localhost:8080/candidates', {params});
+    const response = await axiosInstance.get<candidatesResponseAPI>('https://decorous-volcano-production.up.railway.app/candidates', {params});
     return response.data;
   } catch (error) {
     console.error('Error fetching candidates', error);
@@ -57,7 +57,7 @@ export const updateCandidate = async (data: any) => {
 
 export async function fetchRoles(): Promise<string[]> {
   try {
-    const response = await axiosInstance.get('http://localhost:8080/candidates/positions');
+    const response = await axiosInstance.get('https://decorous-volcano-production.up.railway.app/candidates/positions');
     return response.data;
   } catch (error) {
     console.error('Error fetching data', error);
@@ -92,7 +92,7 @@ export function transformApiDataToUserItems(apiData: IUserItem[] = []) {
 
 export const fetchUserById = async (id: string): Promise<IUserItem> => {
   try {
-    const response = await axiosInstance.get(`http://localhost:8080/candidates/${id}`);
+    const response = await axiosInstance.get(`https://decorous-volcano-production.up.railway.app/candidates/${id}`);
     const apiUser = response.data;
 
     return {
@@ -136,7 +136,7 @@ const updateUser = async (userData: any) => {
 
     console.log('User data to update:', userData);
 
-    const response = await axiosInstance.patch(`http://localhost:8080/users/${getAccountId()}`, userData);
+    const response = await axiosInstance.patch(`https://decorous-volcano-production.up.railway.app/users/${getAccountId()}`, userData);
 
     // Check if the request was successful
     if (response.status === 200) {
@@ -158,7 +158,7 @@ export const resetForgottenUserPasswordByEmail = async (email: string) => {
 
   try {
 
-    const response = await axiosInstance.post(`http://localhost:8080/initiate-password-reset`, {email});
+    const response = await axiosInstance.post(`https://decorous-volcano-production.up.railway.app/initiate-password-reset`, {email});
 
     // Check if the request was successful
     if (response.status === 200) {
@@ -179,7 +179,7 @@ export const updateUserCredentials = async (data: any) => {
 
   try {
 
-    const response = await axiosInstance.post(`http://localhost:8080/update-password`, data);
+    const response = await axiosInstance.post(`https://decorous-volcano-production.up.railway.app/update-password`, data);
 
     // Check if the request was successful
     if (response.status === 200) {
