@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "declaration": true,
     "baseUrl": "./",
     "target": "es5",
     "lib": [
@@ -26,7 +27,8 @@
     "forceConsistentCasingInFileNames": true
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "vite.config.ts"
   ],
   "include": [
     "**/*.ts",

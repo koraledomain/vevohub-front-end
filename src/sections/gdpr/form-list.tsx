@@ -1,18 +1,19 @@
 import React from 'react';
+import { Icon } from '@iconify/react';
+
 import {
-  Box,
   Card,
   Table,
+  TableRow,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
-  TableRow,
   Typography,
   IconButton,
+  TableContainer,
 } from '@mui/material';
+
 import { RouterLink } from 'src/routes/components';
-import { Icon } from '@iconify/react';
 
 type FormConfig = {
   id: string;

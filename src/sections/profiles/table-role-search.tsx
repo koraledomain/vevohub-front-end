@@ -10,6 +10,7 @@ interface ProfileSearchProps {
 }
 
 // Utility function to normalize text (capitalize words)
+// eslint-disable-next-line
 const normalizeText = (text: string): string => text
     .toLowerCase()
     .replace(/\b\w/g, (char) => char.toUpperCase())

@@ -5,9 +5,10 @@ import {AuthGuard} from 'src/auth/guard';
 import DashboardLayout from 'src/layouts/dashboard';
 
 import {LoadingScreen} from 'src/components/loading-screen';
+
 import FormListView from "../../sections/gdpr/form-list-view";
-import FormSubmissionsView from "../../sections/gdpr/form-submission-view";
 import GeneratedFormView from "../../sections/gdpr/generated-form-view";
+import FormSubmissionsView from "../../sections/gdpr/form-submission-view";
 
 // ----------------------------------------------------------------------
 
@@ -70,7 +71,7 @@ export const dashboardRoutes = [
     path: 'public/form/:formId',
     element: (
       <Suspense fallback={<LoadingScreen/>}>
-        <GeneratedFormView public={true}/>
+        <GeneratedFormView public/>
       </Suspense>
     ),
   },

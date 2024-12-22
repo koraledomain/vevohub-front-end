@@ -18,6 +18,7 @@ import {useSnackbar} from 'src/components/snackbar';
 import FormProvider, {RHFTextField, RHFAutocomplete} from 'src/components/hook-form';
 
 import {IUserItem} from 'src/types/user';
+
 import {createCandidate, updateCandidate} from "../../_mock";
 
 type Props = {

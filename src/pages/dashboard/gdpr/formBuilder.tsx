@@ -1,4 +1,5 @@
 import {Helmet} from 'react-helmet-async';
+
 import FormBuilderView from "../../../sections/gdpr/form-builder-view";
 
 // ----------------------------------------------------------------------

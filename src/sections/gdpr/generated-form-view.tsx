@@ -1,12 +1,16 @@
-import React, {useEffect, useState} from 'react';
-import {Box, Button, FormControlLabel, Checkbox, Stack, Typography} from '@mui/material';
-import {FormProvider, useForm} from 'react-hook-form';
-import {useParams} from 'src/routes/hooks';
 import {v4 as uuidv4} from 'uuid';
+import React, {useState, useEffect} from 'react';
+import {useForm, FormProvider} from 'react-hook-form';
+
+import {Box, Stack, Button, Checkbox, Typography, FormControlLabel} from '@mui/material';
+
+import {useParams} from 'src/routes/hooks';
+
+import {useSnackbar} from 'src/components/snackbar';
+
 import AddressPreview from '../../components/form-builder/address-preview';
 import FullNamePreview from '../../components/form-builder/full-name-preview';
 import SignatureComponent from '../../components/form-builder/SignatureCanvasPreview';
-import {useSnackbar} from 'src/components/snackbar';
 
 type FormData = {
   id: string;
@@ -56,7 +60,7 @@ export default function GeneratedFormView({public: isPublic = false}: Props) {
         id: submissionId,
         formId,
         date: new Date().toISOString(),
-        data: data,
+        data,
         gdprConsent: data.gdprConsent || false,
         approved: false,
         signature: data.signature || null

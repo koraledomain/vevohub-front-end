@@ -1,5 +1,5 @@
-import axiosInstance from '../utils/axios';
 import {IUserItem} from '../types/user';
+import axiosInstance from '../utils/axios';
 import {getAccountId} from '../auth/context/jwt/utils';
 import {candidatesResponseAPI} from "../types/candidates";
 
@@ -126,7 +126,7 @@ export const fetchUserById = async (id: string): Promise<IUserItem> => {
 
 
 // Assuming you have a baseURL for your API
-const baseURL = 'https://api.example.com/';
+// const baseURL = 'https://api.example.com/';
 
 // Function to update user data via API
 const updateUser = async (userData: any) => {
