@@ -1,25 +1,29 @@
+import {PDFDocument} from 'pdf-lib';
+import {enqueueSnackbar} from "notistack";
 import React, {useState, useEffect} from 'react';
+
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
 import {
   Box,
-  Container,
+  Card,
   Table,
   Stack,
-  Card,
+  Button,
+  Container,
   TableBody,
-  TableContainer,
   IconButton,
   Typography,
-  Button,
+  TableContainer,
 } from '@mui/material';
-import Iconify from 'src/components/iconify';
+
 import Label from 'src/components/label';
-import TableCell from "@mui/material/TableCell";
-import {TableHeadCustom} from "../../components/table";
-import TableRow from "@mui/material/TableRow";
+import Iconify from 'src/components/iconify';
+
+import {FormData, FormSubmission} from 'src/sections/gdpr/types/types'
+
 import {useParams} from "../../routes/hooks";
-import {enqueueSnackbar} from "notistack";
-import {PDFDocument} from 'pdf-lib';
-import {FormSubmission, FormData} from 'src/sections/gdpr/types/types'
+import {TableHeadCustom} from "../../components/table";
 
 const TABLE_HEAD = [
   {id: 'submissionDate', label: 'Submission Date'},

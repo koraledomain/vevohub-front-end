@@ -1,7 +1,10 @@
 import React from 'react';
 import {useQuery} from 'react-query';
 
+import Stack from "@mui/material/Stack";
+import Avatar from "@mui/material/Avatar";
 import Container from '@mui/material/Container';
+import Typography from "@mui/material/Typography";
 
 import {paths} from 'src/routes/paths';
 
@@ -13,9 +16,6 @@ import {IUserItem} from 'src/types/user';
 import {fetchUserById} from "../../../_mock";
 import ListUserForms from "../user-list-form";
 import {queryClient} from "../../../hooks/queryClient";
-import Avatar from "@mui/material/Avatar";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 
 type Props = {
   id: string;
@@ -24,6 +24,7 @@ type Props = {
 const ProfileEditPage = ({id}: Props) => {
   const settings = useSettingsContext();
 
+  // eslint-disable-next-line
   const {data: currentUser, error, isLoading, isFetching} = useQuery<IUserItem>(
     ['user', id],
     () => fetchUserById(id),

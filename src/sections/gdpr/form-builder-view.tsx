@@ -1,27 +1,30 @@
-import React, {useMemo, useState} from 'react';
-import {Box, Button, Card, Dialog, DialogActions, DialogContent, IconButton, Stack, Typography} from '@mui/material';
-import {FormProvider, useForm} from 'react-hook-form';
-import {DndProvider, useDrag, useDrop} from 'react-dnd';
-import {HTML5Backend} from 'react-dnd-html5-backend';
-import {RHFTextField, RHFUploadAvatar} from '../../components/hook-form';
-import {fData} from '../../utils/format-number';
-import FullNamePreview from "../../components/form-builder/full-name-preview";
-import AddressPreview from "../../components/form-builder/address-preview";
-import CheckboxPreview from "../../components/form-builder/checkbox-preview";
-import SignatureComponent from "../../components/form-builder/SignatureCanvasPreview";
-import {useNavigate} from "react-router-dom";
-import {v4 as uuidv4} from 'uuid';
 import * as Yup from 'yup';
+import {v4 as uuidv4} from 'uuid';
+import {useNavigate} from "react-router-dom";
+import React, {useMemo, useState} from 'react';
 import {yupResolver} from "@hookform/resolvers/yup";
-import {useSnackbar} from "../../components/snackbar";
-import Iconify from "../../components/iconify";
+import {HTML5Backend} from 'react-dnd-html5-backend';
+import {useForm, FormProvider} from 'react-hook-form';
+import {useDrag, useDrop, DndProvider} from 'react-dnd';
+
 import TextField from "@mui/material/TextField";
 import DialogTitle from "@mui/material/DialogTitle";
+import {Box, Card, Stack, Button, Dialog, IconButton, Typography, DialogActions, DialogContent} from '@mui/material';
+
 import {FormComponent} from "./types/types";
+import Iconify from "../../components/iconify";
+import {fData} from '../../utils/format-number';
+import {useSnackbar} from "../../components/snackbar";
+import {RHFTextField, RHFUploadAvatar} from '../../components/hook-form';
+import AddressPreview from "../../components/form-builder/address-preview";
+import CheckboxPreview from "../../components/form-builder/checkbox-preview";
+import FullNamePreview from "../../components/form-builder/full-name-preview";
+import SignatureComponent from "../../components/form-builder/SignatureCanvasPreview";
 
 
 export default function FormBuilder() {
   const [formConfig, setFormConfig] = useState<FormComponent[]>([]);
+  // eslint-disable-next-line
   const [logo, setLogo] = useState<File | string | null>(null);
 
   const [showUrlDialog, setShowUrlDialog] = useState(false);
@@ -58,7 +61,7 @@ export default function FormBuilder() {
 
   const {handleSubmit} = methods
 
-  const navigate = useNavigate();
+  useNavigate();
 
   const handleAddComponent = (component: FormComponent) => {
     const newComponent = {...component, id: `${Date.now()}`};
@@ -424,20 +427,20 @@ function DroppableComponent({
             return (
               <Box sx={{flex: 1}}>
                 <Typography variant="subtitle2" sx={{mb: 1}}>Full Name</Typography>
-                <FullNamePreview disabled={true}/>
+                <FullNamePreview disabled/>
               </Box>
             );
           case 'address':
             return (
               <Box sx={{flex: 1}}>
                 <Typography variant="subtitle2" sx={{mb: 1}}>Address</Typography>
-                <AddressPreview disabled={true}/>
+                <AddressPreview disabled/>
               </Box>
             );
           case 'checkbox':
             return (
               <Box sx={{flex: 1}}>
-                <Typography></Typography>
+                <Typography/>
                 <CheckboxPreview disabled={false}/>
               </Box>
             );
@@ -448,7 +451,7 @@ function DroppableComponent({
                   Signature
                 </Typography>
                 <SignatureComponent
-                  disabled={true}
+                  disabled
                   width={300}
                   height={150}
                 />

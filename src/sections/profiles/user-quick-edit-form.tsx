@@ -42,7 +42,9 @@ export default function UserQuickEditForm({currentUser, open, onClose}: Props) {
       firstName: currentUser?.first_name || '',
       lastName: currentUser?.last_name || '',
       profile: currentUser?.profile || '',
+      // eslint-disable-next-line
       contact: currentUser?.contacts.filter(contact => {
+        // eslint-disable-next-line
         contact.email
       })
     }),

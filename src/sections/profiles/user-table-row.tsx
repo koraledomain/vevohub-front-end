@@ -12,7 +12,6 @@ import ListItemText from '@mui/material/ListItemText';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
@@ -57,7 +56,7 @@ export default function UserTableRow({
         </TableCell>
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }} onClick={handleRowClick}>
-          <Avatar alt={first_name} src={'/path/to/avatar'} sx={{ mr: 2 }} />
+          <Avatar alt={first_name} src="/path/to/avatar" sx={{ mr: 2 }} />
           <ListItemText
             primary={`${first_name} ${last_name}`}
             secondary={profile}

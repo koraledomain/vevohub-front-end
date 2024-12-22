@@ -1,42 +1,44 @@
-import React, { useCallback, useState } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
-import { Button, Card, Container, IconButton, Table, TableBody, TableContainer, Tooltip } from '@mui/material';
+import React, {useState, useCallback} from 'react';
+import {useQuery, useQueryClient} from 'react-query';
 
-import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
-import { RouterLink } from 'src/routes/components';
+import {Card, Table, Button, Tooltip, Container, TableBody, IconButton, TableContainer} from '@mui/material';
 
-import { useBoolean } from 'src/hooks/use-boolean';
+import {paths} from 'src/routes/paths';
+import {useRouter} from 'src/routes/hooks';
+import {RouterLink} from 'src/routes/components';
 
-import { fetchCandidates, fetchRoles, transformApiDataToUserItems, USER_STATUS_OPTIONS } from 'src/_mock';
+import {useBoolean} from 'src/hooks/use-boolean';
+
+import {fetchRoles, fetchCandidates, transformApiDataToUserItems} from 'src/_mock';
+
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-import { useSnackbar } from 'src/components/snackbar';
-import { ConfirmDialog } from 'src/components/custom-dialog';
+import {useSnackbar} from 'src/components/snackbar';
+import {ConfirmDialog} from 'src/components/custom-dialog';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import {
+  useTable,
   emptyRows,
+  TableNoData,
   TableEmptyRows,
   TableHeadCustom,
-  TableNoData,
-  TablePaginationCustom,
   TableSelectedAction,
-  useTable,
+  TablePaginationCustom,
 } from 'src/components/table';
 
-import { IUserItem, IUserTableFilters, IUserTableFilterValue } from 'src/types/user';
+import {IUserItem, IUserTableFilters, IUserTableFilterValue} from 'src/types/user';
 
 import UserTableRow from '../user-table-row';
 import UserTableToolbar from '../user-table-toolbar';
-import UserTableFiltersResult from '../user-table-filters-result';
 import {useSettingsContext} from "../../../components/settings";
+import UserTableFiltersResult from '../user-table-filters-result';
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name' },
-  { id: 'fee', label: 'Fee', width: 100 },
-  { id: 'gdpr', label: 'GDPR', width: 100 },
-  { id: 'linkedin', label: 'LinkedIn', width: 100 },
-  { id: 'actions', label: 'Actions', width: 100 },
+  {id: 'name', label: 'Name'},
+  {id: 'fee', label: 'Fee', width: 100},
+  {id: 'gdpr', label: 'GDPR', width: 100},
+  {id: 'linkedin', label: 'LinkedIn', width: 100},
+  {id: 'actions', label: 'Actions', width: 100},
 ];
 
 const defaultFilters: IUserTableFilters = {
@@ -59,13 +61,14 @@ const normalizeData = (data: (string | null)[]): string[] => {
 };
 
 export default function ProfileListView() {
-  const { enqueueSnackbar } = useSnackbar();
+  const {enqueueSnackbar} = useSnackbar();
   const table = useTable();
   const router = useRouter();
   const confirm = useBoolean();
   const queryClient = useQueryClient();
 
   const [roles, setRoles] = useState<string[]>([]);
+  // eslint-disable-next-line
   const [filteredRoles, setFilteredRoles] = useState<string[]>([]);
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -79,7 +82,7 @@ export default function ProfileListView() {
   });
 
   // Fetch candidates with filters, including search and pagination
-  const { data: apiData, isLoading, isFetching } = useQuery(
+  const {data: apiData, isLoading, isFetching} = useQuery(
     ['candidates', table.page, table.rowsPerPage, filters],
     () => fetchCandidates(table.page, table.rowsPerPage, filters.role, filters.name),
     {
@@ -91,6 +94,7 @@ export default function ProfileListView() {
     }
   );
 
+// eslint-disable-next-line
   const tableData = apiData ? transformApiDataToUserItems(apiData.content) : [];
   const totalElements = apiData ? apiData.totalElements : 0;
 
@@ -150,24 +154,26 @@ export default function ProfileListView() {
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
         links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Profiles', href: paths.dashboard.profiles.root },
-          { name: 'List' },
+          {name: 'Dashboard', href: paths.dashboard.root},
+          {name: 'Profiles', href: paths.dashboard.profiles.root},
+          {name: 'List'},
         ]}
         action={
-          <Button component={RouterLink} href={paths.dashboard.profiles.new} variant="contained" startIcon={<Iconify icon="mingcute:add-line" />}>
+          <Button component={RouterLink} href={paths.dashboard.profiles.new} variant="contained"
+                  startIcon={<Iconify icon="mingcute:add-line"/>}>
             New Profile
           </Button>
         }
-        sx={{ mb: { xs: 3, md: 5 } }}
+        sx={{mb: {xs: 3, md: 5}}}
       />
 
       <Card>
-        <UserTableToolbar filters={filters} onFilters={handleFilters} roleOptions={roles} />
+        <UserTableToolbar filters={filters} onFilters={handleFilters} roleOptions={roles}/>
 
-        <UserTableFiltersResult filters={filters} onFilters={handleFilters} onResetFilters={handleResetFilters} results={tableData.length} sx={{ p: 2.5, pt: 0 }} />
+        <UserTableFiltersResult filters={filters} onFilters={handleFilters} onResetFilters={handleResetFilters}
+                                results={tableData.length} sx={{p: 2.5, pt: 0}}/>
 
-        <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+        <TableContainer sx={{position: 'relative', overflow: 'unset'}}>
           <TableSelectedAction
             dense={table.dense}
             numSelected={table.selected.length}
@@ -181,14 +187,14 @@ export default function ProfileListView() {
             action={
               <Tooltip title="Delete">
                 <IconButton color="primary" onClick={confirm.onTrue}>
-                  <Iconify icon="solar:trash-bin-trash-bold" />
+                  <Iconify icon="solar:trash-bin-trash-bold"/>
                 </IconButton>
               </Tooltip>
             }
           />
 
           <Scrollbar>
-            <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+            <Table size={table.dense ? 'small' : 'medium'} sx={{minWidth: 960}}>
               <TableHeadCustom
                 order={table.order}
                 orderBy={table.orderBy}
@@ -215,8 +221,9 @@ export default function ProfileListView() {
                   />
                 ))}
 
-                <TableEmptyRows height={denseHeight} emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)} />
-                <TableNoData notFound={!tableData.length && !isLoading && !isFetching} />
+                <TableEmptyRows height={denseHeight}
+                                emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}/>
+                <TableNoData notFound={!tableData.length && !isLoading && !isFetching}/>
               </TableBody>
             </Table>
           </Scrollbar>

@@ -1,10 +1,11 @@
 // FormSubmissionRow component
-import { TableRow } from "@mui/material";
-import TableCell from "@mui/material/TableCell";
-import Checkbox from "@mui/material/Checkbox";
-import Label from "../label";
 import Box from "@mui/material/Box";
+import { TableRow } from "@mui/material";
+import Checkbox from "@mui/material/Checkbox";
+import TableCell from "@mui/material/TableCell";
 import IconButton from "@mui/material/IconButton";
+
+import Label from "../label";
 import Iconify from "../iconify";
 
 export default function FormSubmissionRow({

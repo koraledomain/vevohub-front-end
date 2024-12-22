@@ -1,9 +1,10 @@
+import React from "react";
+
 import {Stack} from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
-import Typography from "@mui/material/Typography";
-import {PreviewComponentProps} from "./types/types";
+
 import {RHFTextField} from "../hook-form";
-import React from "react";
+import {PreviewComponentProps} from "./types/types";
 
 export default function CheckboxPreview({disabled = false, id = ''}: PreviewComponentProps) {
   return (
