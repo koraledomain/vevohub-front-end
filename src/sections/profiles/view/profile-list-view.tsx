@@ -89,6 +89,7 @@ export default function ProfileListView() {
       staleTime: 4 * 60 * 1000,
       cacheTime: 4 * 60 * 1000,
       onSuccess: (data) => {
+        console.log('test')
         console.log('Filtered data fetched successfully:', data);
       },
     }
