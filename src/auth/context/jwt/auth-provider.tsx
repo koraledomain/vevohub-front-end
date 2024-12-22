@@ -132,7 +132,7 @@ export function AuthProvider({ children }: Props) {
       password,
     };
 
-    const API_BASE_URL = 'http://localhost:8080';
+    const API_BASE_URL = 'https://decorous-volcano-production.up.railway.app';
     const res = await axios.post(`${API_BASE_URL}/auth/login`, data);
     const { accessToken } = res.data;
     setSession(accessToken);
@@ -162,7 +162,7 @@ export function AuthProvider({ children }: Props) {
         firstName,
         lastName,
       };
-      const API_BASE_URL = 'http://localhost:8080';
+      const API_BASE_URL = 'https://decorous-volcano-production.up.railway.app';
 
 
       const res = await axiosInstance.post(`${API_BASE_URL}/register`, data);
