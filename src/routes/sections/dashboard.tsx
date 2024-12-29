@@ -27,52 +27,61 @@ const UserAccountPage = lazy(() => import('src/pages/dashboard/user/account'));
 const UserCreatePage = lazy(() => import('src/pages/dashboard/profiles/new'));
 const ProfileEditPage = lazy(() => import('src/pages/dashboard/profiles/edit'));
 
-export const dashboardRoutes = [
-  {
-    path: 'dashboard',
-    element: (
-      <AuthGuard>
-        <DashboardLayout>
-          <Suspense fallback={<LoadingScreen/>}>
-            <Outlet/>
-          </Suspense>
-        </DashboardLayout>
-      </AuthGuard>
-    ),
-    children: [
-      {element: <IndexPage/>, index: true},
-      {
-        path: 'gdpr', children: [
-          {path: 'form-builder', element: <FormBuilder/>},
-          {path: 'generated-form', element: <FormListView/>},
-          {path: 'form/:formId', element: <GeneratedForm/>},
-          {path: 'form/:formId/submissions', element: <FormSubmissionsView/>},
-        ]
-      },
-      {path: 'reporting', element: <ReportingPage/>},
-      {
-        path: 'profiles',
-        children: [
-          {path: 'new', element: <UserCreatePage/>},
-          {path: ':id/edit', element: <ProfileEditPage/>},
-        ],
-      },
-      {
-        path: 'group',
-        children: [
-          {element: <PageFour/>, index: true},
-          {path: 'five', element: <PageFive/>},
-          {path: 'account', element: <UserAccountPage/>},
-        ],
-      },
-    ],
-  },
-  {
-    path: 'public/form/:formId',
-    element: (
-      <Suspense fallback={<LoadingScreen/>}>
-        <GeneratedFormView public/>
-      </Suspense>
-    ),
-  },
-];
+
+export const dashboardRoutes = (flags: any) => {
+  const {isProfilePageEnabled} = flags
+  return [
+    {
+      path: 'dashboard',
+      element: (
+        <AuthGuard>
+          <DashboardLayout>
+            <Suspense fallback={<LoadingScreen/>}>
+              <Outlet/>
+            </Suspense>
+          </DashboardLayout>
+        </AuthGuard>
+      ),
+      children: [
+        ...(isProfilePageEnabled ? [
+          {element: <IndexPage/>, index: true},
+        ] : [])
+        ,
+        {
+          path: 'gdpr', children: [
+            {path: 'form-builder', element: <FormBuilder/>},
+            {path: 'generated-form', element: <FormListView/>},
+            {path: 'form/:formId', element: <GeneratedForm/>},
+            {path: 'form/:formId/submissions', element: <FormSubmissionsView/>},
+          ]
+        },
+        {path: 'reporting', element: <ReportingPage/>},
+        ...(isProfilePageEnabled ? [
+          {
+            path: 'profiles',
+            children: [
+              {path: 'new', element: <UserCreatePage/>},
+              {path: ':id/edit', element: <ProfileEditPage/>},
+            ],
+          }
+        ] : []),
+        {
+          path: 'group',
+          children: [
+            {element: <PageFour/>, index: true},
+            {path: 'five', element: <PageFive/>},
+            {path: 'account', element: <UserAccountPage/>},
+          ],
+        },
+      ],
+    },
+    {
+      path: 'public/form/:formId',
+      element: (
+        <Suspense fallback={<LoadingScreen/>}>
+          <GeneratedFormView public/>
+        </Suspense>
+      ),
+    },
+  ];
+};
