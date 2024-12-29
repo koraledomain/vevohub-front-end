@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { useMemo, useEffect, useReducer, useCallback } from 'react';
+import {useMemo, useEffect, useReducer, useCallback} from 'react';
 
-import { AuthContext } from './auth-context';
-import axiosInstance, { endpoints } from '../../../utils/axios';
-import { setSession, isValidToken, getAccountId } from './utils';
-import { AuthUserType, ActionMapType, AuthStateType } from '../../types';
+import {AuthContext} from './auth-context';
+import axiosInstance, {endpoints} from '../../../utils/axios';
+import {setSession, isValidToken, getAccountId} from './utils';
+import {AuthUserType, ActionMapType, AuthStateType} from '../../types';
 
 // ----------------------------------------------------------------------
 /**
@@ -79,7 +79,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export function AuthProvider({ children }: Props) {
+export function AuthProvider({children}: Props) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const initialize = useCallback(async () => {
@@ -91,7 +91,7 @@ export function AuthProvider({ children }: Props) {
 
         const res = await axios.get(endpoints.auth.me);
 
-        const { user } = res.data;
+        const {user} = res.data;
 
         dispatch({
           type: Types.INITIAL,
@@ -132,14 +132,10 @@ export function AuthProvider({ children }: Props) {
       password,
     };
 
-    const API_BASE_URL = 'https://decorous-volcano-production.up.railway.app';
-    const res = await axios.post(`${API_BASE_URL}/auth/login`, data);
-    const { accessToken } = res.data;
+    const res = await axiosInstance.post(endpoints.auth.login, data);
+    const {accessToken} = res.data;
     setSession(accessToken);
-
-    const response = await axiosInstance.get(`${API_BASE_URL}/users/${getAccountId()}`);
-    // const userRes = await axiosInstance.get(`${API_BASE_URL}/auth/login`, data);
-
+    const response = await axiosInstance.get(`/users/${getAccountId()}`);
     const user = response.data;
 
     dispatch({
@@ -162,18 +158,16 @@ export function AuthProvider({ children }: Props) {
         firstName,
         lastName,
       };
-      const API_BASE_URL = 'https://decorous-volcano-production.up.railway.app';
 
 
-      const res = await axiosInstance.post(`${API_BASE_URL}/register`, data);
+      const res = await axiosInstance.post(endpoints.auth.register, data);
 
-      const resLogin = await axiosInstance.post(`${API_BASE_URL}/auth/login`, { email, password });
+      const resLogin = await axiosInstance.post(endpoints.auth.login, {email, password});
 
-      const { accessToken } = resLogin.data;
+      const {accessToken} = resLogin.data;
 
-      const { user } = res.data;
+      const {user} = res.data;
 
-      // sessionStorage.setItem(STORAGE_KEY, accessToken);
       setSession(accessToken);
 
       dispatch({
