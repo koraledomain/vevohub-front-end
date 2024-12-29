@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
 
 import { HOST_API } from 'src/config-global';
-import {getAccountId} from "../auth/context/jwt/utils";
+
 
 // ----------------------------------------------------------------------
 
@@ -35,9 +35,9 @@ export const endpoints = {
     login: '/auth/login',
     register: '/auth/register',
   },
-  user:{
-    account:`/users/${getAccountId()}`
-  },
+  // user:{
+  //   account:`/users/${getAccountId()}`
+  // },
   mail: {
     list: '/api/mail/list',
     details: '/api/mail/details',

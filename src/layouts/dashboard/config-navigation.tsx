@@ -1,17 +1,15 @@
-import {useMemo} from 'react';
+import { useMemo } from 'react';
 
-import {paths} from 'src/routes/paths';
+import { paths } from 'src/routes/paths';
 
 import SvgColor from 'src/components/svg-color';
+
+import { useFeatureFlags } from "../../utils/featureflags";
 
 // ----------------------------------------------------------------------
 
 const icon = (name: string) => (
-  <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{width: 1, height: 1}}/>
-  // OR
-  // <Iconify icon="fluent:mail-24-filled" />
-  // https://icon-sets.iconify.design/solar/
-  // https://www.streamlinehq.com/icons
+  <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />
 );
 
 const ICONS = {
@@ -44,15 +42,18 @@ const ICONS = {
 // ----------------------------------------------------------------------
 
 export function useNavData() {
+  const { isProfilePageEnabled } = useFeatureFlags();
+
   return useMemo(
     () => [
       // OVERVIEW
-      // ----------------------------------------------------------------------
       {
         subheader: 'Dashboard',
         items: [
-          {title: 'profiles', path: paths.dashboard.root, icon: ICONS.dashboard},
-          {title: 'jobs', path: paths.dashboard.two, icon: ICONS.job},
+          ...(isProfilePageEnabled
+            ? [{ title: 'profiles', path: paths.dashboard.root, icon: ICONS.dashboard }]
+            : []),
+          { title: 'jobs', path: paths.dashboard.two, icon: ICONS.job },
           {
             title: 'Reporting',
             path: paths.dashboard.reporting,
@@ -61,7 +62,6 @@ export function useNavData() {
         ],
       },
       // MANAGEMENT
-      // ----------------------------------------------------------------------
       {
         subheader: 'gdpr',
         items: [
@@ -76,9 +76,7 @@ export function useNavData() {
           },
         ],
       },
-
       // MANAGEMENT
-      // ----------------------------------------------------------------------
       {
         subheader: 'management',
         items: [
@@ -87,14 +85,12 @@ export function useNavData() {
             path: paths.dashboard.group.root,
             icon: ICONS.user,
             children: [
-              // { title: 'four', path: paths.dashboard.group.root },
-              // { title: 'five', path: paths.dashboard.group.five },
               { title: 'account', path: paths.dashboard.group.account },
             ],
           },
         ],
       },
     ],
-    []
+    [isProfilePageEnabled] // Add the dependency here
   );
 }

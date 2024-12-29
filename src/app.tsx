@@ -16,8 +16,9 @@ import {SettingsDrawer, SettingsProvider} from 'src/components/settings';
 import {AuthProvider} from 'src/auth/context/jwt';
 import {QueryClientProvider} from "react-query";
 import {ReactQueryDevtools} from "react-query/devtools";
+import {FlagsmithProvider} from 'flagsmith/react';
+import flagsmith from "flagsmith";
 import {queryClient} from "./hooks/queryClient";
-
 // ----------------------------------------------------------------------
 //
 export default function App() {
@@ -35,30 +36,38 @@ export default function App() {
 
   useScrollToTop();
 
-
+//    <FlagsmithProvider flagsmith={flagsmith}></FlagsmithProvider>
   return (
-    <AuthProvider>
-      <SettingsProvider
-        defaultSettings={{
-          themeMode: 'light', // 'light' | 'dark'
-          themeDirection: 'ltr', //  'rtl' | 'ltr'
-          themeContrast: 'default', // 'default' | 'bold'
-          themeLayout: 'vertical', // 'vertical' | 'horizontal' | 'mini'
-          themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
-          themeStretch: false,
-        }}
-      >
-        <ThemeProvider>
-          <QueryClientProvider client={queryClient}>
-            <MotionLazy>
-              <SettingsDrawer/>
-              <ProgressBar/>
-              <Router/>
-            </MotionLazy>
-            <ReactQueryDevtools initialIsOpen={false}/>
-          </QueryClientProvider>
-        </ThemeProvider>
-      </SettingsProvider>
-    </AuthProvider>
+    <FlagsmithProvider options={{environmentID: '2cU679ArYH6Vzm8rp95gPu'}} flagsmith={flagsmith}>
+      <AuthProvider>
+        <SettingsProvider
+          defaultSettings
+            ={
+            {
+              themeMode: 'light', // 'light' | 'dark'
+              themeDirection: 'ltr', //  'rtl' | 'ltr'
+              themeContrast: 'default', // 'default' | 'bold'
+              themeLayout: 'vertical', // 'vertical' | 'horizontal' | 'mini'
+              themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
+              themeStretch: false,
+            }
+          }
+        >
+          <ThemeProvider>
+            <QueryClientProvider client
+                                   ={
+              queryClient
+            }>
+              <MotionLazy>
+                <SettingsDrawer/>
+                <ProgressBar/>
+                <Router/>
+              </MotionLazy>
+              <ReactQueryDevtools initialIsOpen={false}/>
+            </QueryClientProvider>
+          </ThemeProvider>
+        </SettingsProvider>
+      </AuthProvider>
+    </FlagsmithProvider>
   );
 }

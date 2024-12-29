@@ -1,5 +1,5 @@
 import { paths } from 'src/routes/paths';
-
+// eslint-disable-next-line
 import axios from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
