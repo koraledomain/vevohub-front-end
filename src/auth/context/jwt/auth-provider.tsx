@@ -1,10 +1,10 @@
 import axios from 'axios';
-import {useMemo, useEffect, useReducer, useCallback} from 'react';
+import { useMemo, useEffect, useReducer, useCallback } from 'react';
 
-import {AuthContext} from './auth-context';
-import axiosInstance, {endpoints} from '../../../utils/axios';
-import {setSession, isValidToken, getAccountId} from './utils';
-import {AuthUserType, ActionMapType, AuthStateType} from '../../types';
+import { AuthContext } from './auth-context';
+import axiosInstance, { endpoints } from '../../../utils/axios';
+import { setSession, isValidToken, getAccountId } from './utils';
+import { AuthUserType, ActionMapType, AuthStateType } from '../../types';
 
 // ----------------------------------------------------------------------
 /**
@@ -79,7 +79,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export function AuthProvider({children}: Props) {
+export function AuthProvider({ children }: Props) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const initialize = useCallback(async () => {
@@ -91,7 +91,7 @@ export function AuthProvider({children}: Props) {
 
         const res = await axios.get(endpoints.auth.me);
 
-        const {user} = res.data;
+        const { user } = res.data;
 
         dispatch({
           type: Types.INITIAL,
@@ -133,8 +133,16 @@ export function AuthProvider({children}: Props) {
     };
 
     const res = await axiosInstance.post(endpoints.auth.login, data);
-    const {accessToken} = res.data;
+
+    const { accessToken, domain } = res.data;
+
     setSession(accessToken);
+
+    if (domain && window.location.hostname !== domain) {
+      window.location.href = `${window.location.protocol}//${domain}`;
+      return;
+    }
+
     const response = await axiosInstance.get(`/users/${getAccountId()}`);
     const user = response.data;
 
@@ -159,16 +167,20 @@ export function AuthProvider({children}: Props) {
         lastName,
       };
 
-
       const res = await axiosInstance.post(endpoints.auth.register, data);
 
-      const resLogin = await axiosInstance.post(endpoints.auth.login, {email, password});
+      const resLogin = await axiosInstance.post(endpoints.auth.login, { email, password });
 
-      const {accessToken} = resLogin.data;
+      const { accessToken, domain } = resLogin.data;
 
-      const {user} = res.data;
+      const { user } = res.data;
 
       setSession(accessToken);
+
+      if (domain && window.location.hostname !== domain) {
+        window.location.href = `${window.location.protocol}//${domain}`;
+        return;
+      }
 
       dispatch({
         type: Types.REGISTER,
@@ -179,7 +191,7 @@ export function AuthProvider({children}: Props) {
         },
       });
     },
-    [],
+    []
   );
 
   // LOGOUT
@@ -208,7 +220,7 @@ export function AuthProvider({children}: Props) {
       register,
       logout,
     }),
-    [login, logout, register, state.user, status],
+    [login, logout, register, state.user, status]
   );
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;
 }
