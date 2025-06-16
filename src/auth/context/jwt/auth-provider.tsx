@@ -133,10 +133,16 @@ export function AuthProvider({children}: Props) {
     };
 
     const res = await axiosInstance.post(endpoints.auth.login, data);
-    const {accessToken} = res.data;
+    const {accessToken, redirectURL, domain} = res.data;
     setSession(accessToken);
+    const finalURL = redirectURL ?? domain;
+    if (finalURL && finalURL !== window.location.origin) {
+      window.location.href = finalURL;
+      return;
+    }
     const response = await axiosInstance.get(`/users/${getAccountId()}`);
     const user = response.data;
+
 
     dispatch({
       type: Types.LOGIN,
@@ -164,11 +170,28 @@ export function AuthProvider({children}: Props) {
 
       const resLogin = await axiosInstance.post(endpoints.auth.login, {email, password});
 
-      const {accessToken} = resLogin.data;
 
-      const {user} = res.data;
+      let {user, accessToken, redirectURL, domain} = res.data;
+
+      if (!accessToken) {
+        const resLogin = await axiosInstance.post(endpoints.auth.login, {email, password});
+        accessToken = resLogin.data.accessToken;
+        if (!redirectURL) {
+          redirectURL = resLogin.data.redirectURL;
+        }
+        if (!domain) {
+          domain = resLogin.data.domain;
+        }
+      }
+
 
       setSession(accessToken);
+
+      const finalURL = redirectURL ?? domain;
+      if (finalURL && finalURL !== window.location.origin) {
+        window.location.href = finalURL;
+        return;
+      }
 
       dispatch({
         type: Types.REGISTER,
