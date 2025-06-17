@@ -57,7 +57,7 @@ export default function Header() {
           }),
         }}
       >
-        <Container sx={{ height: 1, display: 'flex', alignItems: 'center' }}>
+        <Container sx={{height: 1, display: 'flex', alignItems: 'center'}}>
           <Badge
             sx={{
               [`& .${badgeClasses.badge}`]: {
@@ -71,15 +71,15 @@ export default function Header() {
                 target="_blank"
                 rel="noopener"
                 underline="none"
-                sx={{ ml: 1 }}
+                sx={{ml: 1}}
               >
-                <Label color="info" sx={{ textTransform: 'unset', height: 22, px: 0.5 }}>
+                <Label color="info" sx={{textTransform: 'unset', height: 22, px: 0.5}}>
                   v5.7.0
                 </Label>
               </Link>
             }
           >
-            <Logo />
+            <Logo/>
           </Badge>
 
           <Box sx={{ flexGrow: 1 }} />
@@ -105,7 +105,7 @@ export default function Header() {
         </Container>
       </Toolbar>
 
-      {offsetTop && <HeaderShadow />}
+      {offsetTop && <HeaderShadow/>}
     </AppBar>
   );
 }
