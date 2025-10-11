@@ -3,8 +3,8 @@ import React, {useState, useEffect} from 'react';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
+import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Unstable_Grid2';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 
@@ -81,13 +81,13 @@ export default function TrelloInfo({info}: Props) {
 
   return (
     <Grid container spacing={3}>
-      <Grid xs={12} md={4}>
+      <Grid size={{ xs: 12, md: 4 }}>
         <Stack spacing={3}>
           {renderAbout}
         </Stack>
       </Grid>
 
-      <Grid xs={12} md={8}>
+      <Grid size={{ xs: 12, md: 8 }}>
         <Stack spacing={3}>
           {renderCommentCard}
         </Stack>

@@ -125,7 +125,9 @@ export default function FormSubmissionsView() {
       }
 
       const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes], {type: 'application/pdf'});
+      const pdfAb = new ArrayBuffer(pdfBytes.length);
+      new Uint8Array(pdfAb).set(pdfBytes);
+      const blob = new Blob([pdfAb], {type: 'application/pdf'});
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -173,7 +175,9 @@ export default function FormSubmissionsView() {
       });
 
       const pdfBytes = await auditDoc.save();
-      const blob = new Blob([pdfBytes], {type: 'application/pdf'});
+      const auditAb = new ArrayBuffer(pdfBytes.length);
+      new Uint8Array(auditAb).set(pdfBytes);
+      const blob = new Blob([auditAb], {type: 'application/pdf'});
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;

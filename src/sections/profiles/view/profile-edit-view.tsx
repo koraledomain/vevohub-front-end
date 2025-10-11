@@ -1,5 +1,5 @@
 import React from 'react';
-import {useQuery} from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
@@ -25,18 +25,13 @@ const ProfileEditPage = ({id}: Props) => {
   const settings = useSettingsContext();
 
   // eslint-disable-next-line
-  const {data: currentUser, error, isLoading, isFetching} = useQuery<IUserItem>(
-    ['user', id],
-    () => fetchUserById(id),
-    {
-      staleTime: 4 * 60 * 1000, // 4 minutes
-      cacheTime: 4 * 60 * 1000, // 4 minutes
-      initialData: () =>
-        // Provide initial data if available in the cache
-        queryClient.getQueryData<IUserItem>(['user', id])
-      ,
-    }
-  );
+  const {data: currentUser, error, isLoading, isFetching} = useQuery<IUserItem>({
+    queryKey: ['user', id],
+    queryFn: () => fetchUserById(id),
+    staleTime: 4 * 60 * 1000,
+    gcTime: 4 * 60 * 1000,
+    initialData: () => queryClient.getQueryData<IUserItem>(['user', id]),
+  });
 
   console.log("currentUser Data:", currentUser);  // Log the currentUser data
 

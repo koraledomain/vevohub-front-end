@@ -5,8 +5,8 @@ import {yupResolver} from '@hookform/resolvers/yup';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Unstable_Grid2';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import {paths} from 'src/routes/paths';
@@ -90,7 +90,7 @@ export default function UserNewEditForm({currentUser}: Props) {
   return (
     <FormProvider methods={methods}>
       <Grid container spacing={3}>
-        <Grid xs={12} md={10}>
+        <Grid size={{ xs: 12, md: 10 }}>
           <Card sx={{p: 3}}>
             <Box
               rowGap={3}
@@ -134,7 +134,7 @@ export default function UserNewEditForm({currentUser}: Props) {
           </Card>
         </Grid>
 
-        <Grid xs={12} md={8}/>
+        <Grid size={{ xs: 12, md: 8 }}/>
       </Grid>
     </FormProvider>
   );

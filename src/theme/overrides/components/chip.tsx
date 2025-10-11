@@ -69,7 +69,7 @@ export function chip(theme: Theme) {
     const colorStyle = COLORS.map((color) => ({
       ...(ownerState.color === color && {
         [`& .${chipClasses.avatar}`]: {
-          color: theme.palette[color].lighter,
+          color: (theme.palette[color] as any).lighter ?? theme.palette[color].light,
           backgroundColor: theme.palette[color].dark,
         },
         // SOFT

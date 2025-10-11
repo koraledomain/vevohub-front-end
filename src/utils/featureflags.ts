@@ -1,8 +1,5 @@
-import {useFlags} from "flagsmith/react";
+import { useFeatureFlag } from 'src/hooks/use-feature-flag';
 
-export const useFeatureFlags = () => {
-  const flags = useFlags(['profiles_page']);
-  return {
-    isProfilePageEnabled: flags.profiles_page.enabled,
-  }
-}
+export const useFeatureFlags = () => ({
+  isProfilePageEnabled: useFeatureFlag('profilesPage'),
+});

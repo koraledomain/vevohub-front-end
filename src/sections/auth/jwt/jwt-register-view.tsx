@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
 
 import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
@@ -11,22 +11,37 @@ import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { paths } from 'src/routes/paths';
-import { RouterLink } from 'src/routes/components';
-import { useRouter, useSearchParams } from 'src/routes/hooks';
+import {paths} from 'src/routes/paths';
+import {RouterLink} from 'src/routes/components';
+import {useRouter, useSearchParams} from 'src/routes/hooks';
 
-import { useBoolean } from 'src/hooks/use-boolean';
+import {useBoolean} from 'src/hooks/use-boolean';
 
-import { useAuthContext } from 'src/auth/hooks';
-import { PATH_AFTER_LOGIN } from 'src/config-global';
+import {useAuthContext} from 'src/auth/hooks';
+import {PATH_AFTER_LOGIN} from 'src/config-global';
 
 import Iconify from 'src/components/iconify';
-import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import FormProvider, {RHFTextField} from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
+/*
+API CONTRACT
+
+company = subdomain  (putem schimba )
+
+
+{
+  "name": "Test",
+  "subdomain": "test_this",
+  "adminEmail": "test_this@acme.com",
+  "adminPassword": "password123"
+}
+
+ */
+
 
 export default function JwtRegisterView() {
-  const { register } = useAuthContext();
+  const {register} = useAuthContext();
 
   const router = useRouter();
 
@@ -60,7 +75,7 @@ export default function JwtRegisterView() {
   const {
     reset,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: {isSubmitting},
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
@@ -76,7 +91,7 @@ export default function JwtRegisterView() {
   });
 
   const renderHead = (
-    <Stack spacing={2} sx={{ mb: 5, position: 'relative' }}>
+    <Stack spacing={2} sx={{mb: 5, position: 'relative'}}>
       <Typography variant="h4">Get started absolutely free</Typography>
 
       <Stack direction="row" spacing={0.5}>
@@ -113,12 +128,11 @@ export default function JwtRegisterView() {
 
   const renderForm = (
     <Stack spacing={2.5}>
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-        <RHFTextField name="firstName" label="First name" />
-        <RHFTextField name="lastName" label="Last name" />
+      <Stack direction={{xs: 'column', sm: 'row'}} spacing={2}>
+        <RHFTextField name="lastName" label="Last name"/>
       </Stack>
-
-      <RHFTextField name="email" label="Email address" />
+      <RHFTextField name="company" label="Company name"/>
+      <RHFTextField name="email" label="Email address"/>
 
       <RHFTextField
         name="password"
@@ -128,7 +142,7 @@ export default function JwtRegisterView() {
           endAdornment: (
             <InputAdornment position="end">
               <IconButton onClick={password.onToggle} edge="end">
-                <Iconify icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                <Iconify icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'}/>
               </IconButton>
             </InputAdornment>
           ),
@@ -153,7 +167,7 @@ export default function JwtRegisterView() {
       {renderHead}
 
       {!!errorMsg && (
-        <Alert severity="error" sx={{ m: 3 }}>
+        <Alert severity="error" sx={{m: 3}}>
           {errorMsg}
         </Alert>
       )}

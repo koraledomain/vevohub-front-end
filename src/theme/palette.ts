@@ -4,13 +4,13 @@ import { alpha } from '@mui/material/styles';
 
 export type ColorSchema = 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error';
 
-declare module '@mui/material/styles/createPalette' {
+declare module '@mui/material/styles' {
   interface TypeBackground {
     neutral: string;
   }
   interface SimplePaletteColorOptions {
-    lighter: string;
-    darker: string;
+    lighter?: string;
+    darker?: string;
   }
   interface PaletteColor {
     lighter: string;

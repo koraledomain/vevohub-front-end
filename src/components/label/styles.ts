@@ -1,30 +1,26 @@
 import Box from '@mui/material/Box';
-import { alpha, Theme, styled } from '@mui/material/styles';
+import { alpha, styled } from '@mui/material/styles';
 
 import { LabelColor, LabelVariant } from './types';
 
 // ----------------------------------------------------------------------
 
-export const StyledLabel = styled(Box)(({
-  theme,
-  ownerState,
-}: {
-  theme: Theme;
-  ownerState: {
-    color: LabelColor;
-    variant: LabelVariant;
-  };
-}) => {
+export const StyledLabel = styled(Box, {
+  shouldForwardProp: (prop) => prop !== 'labelcolor' && prop !== 'labelvariant',
+})<{
+  labelcolor: LabelColor;
+  labelvariant: LabelVariant;
+}>(({ theme, labelcolor, labelvariant }) => {
   const lightMode = theme.palette.mode === 'light';
 
-  const filledVariant = ownerState.variant === 'filled';
+  const filledVariant = labelvariant === 'filled';
 
-  const outlinedVariant = ownerState.variant === 'outlined';
+  const outlinedVariant = labelvariant === 'outlined';
 
-  const softVariant = ownerState.variant === 'soft';
+  const softVariant = labelvariant === 'soft';
 
   const defaultStyle = {
-    ...(ownerState.color === 'default' && {
+    ...(labelcolor === 'default' && {
       // FILLED
       ...(filledVariant && {
         color: lightMode ? theme.palette.common.white : theme.palette.grey[800],
@@ -45,22 +41,22 @@ export const StyledLabel = styled(Box)(({
   };
 
   const colorStyle = {
-    ...(ownerState.color !== 'default' && {
+    ...(labelcolor !== 'default' && {
       // FILLED
       ...(filledVariant && {
-        color: theme.palette[ownerState.color].contrastText,
-        backgroundColor: theme.palette[ownerState.color].main,
+        color: theme.palette[labelcolor].contrastText,
+        backgroundColor: theme.palette[labelcolor].main,
       }),
       // OUTLINED
       ...(outlinedVariant && {
         backgroundColor: 'transparent',
-        color: theme.palette[ownerState.color].main,
-        border: `2px solid ${theme.palette[ownerState.color].main}`,
+        color: theme.palette[labelcolor].main,
+        border: `2px solid ${theme.palette[labelcolor].main}`,
       }),
       // SOFT
       ...(softVariant && {
-        color: theme.palette[ownerState.color][lightMode ? 'dark' : 'light'],
-        backgroundColor: alpha(theme.palette[ownerState.color].main, 0.16),
+        color: theme.palette[labelcolor][lightMode ? 'dark' : 'light'],
+        backgroundColor: alpha(theme.palette[labelcolor].main, 0.16),
       }),
     }),
   };

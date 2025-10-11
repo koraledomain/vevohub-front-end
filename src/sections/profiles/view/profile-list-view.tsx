@@ -1,5 +1,5 @@
 import React, {useState, useCallback} from 'react';
-import {useQuery, useQueryClient} from 'react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {Card, Table, Button, Tooltip, Container, TableBody, IconButton, TableContainer} from '@mui/material';
 
@@ -73,31 +73,30 @@ export default function ProfileListView() {
   const [filters, setFilters] = useState(defaultFilters);
 
   // Fetch roles
-  useQuery('roles', fetchRoles, {
-    onSuccess: (data) => {
-      const normalizedData = normalizeData(data);
-      setRoles(normalizedData);
-      setFilteredRoles(normalizedData); // Initialize filtered roles with all roles
-    },
+  const { data: rolesData } = useQuery<(string | null)[]>({
+    queryKey: ['roles'],
+    queryFn: fetchRoles,
+    staleTime: 4 * 60 * 1000,
+    gcTime: 4 * 60 * 1000,
   });
 
+  if (rolesData && roles.length === 0) {
+    const normalizedData = normalizeData(rolesData);
+    setRoles(normalizedData);
+    setFilteredRoles(normalizedData);
+  }
+
   // Fetch candidates with filters, including search and pagination
-  const {data: apiData, isLoading, isFetching} = useQuery(
-    ['candidates', table.page, table.rowsPerPage, filters],
-    () => fetchCandidates(table.page, table.rowsPerPage, filters.role, filters.name),
-    {
-      staleTime: 4 * 60 * 1000,
-      cacheTime: 4 * 60 * 1000,
-      onSuccess: (data) => {
-        console.log('test')
-        console.log('Filtered data fetched successfully:', data);
-      },
-    }
-  );
+  const {data: apiData, isLoading, isFetching} = useQuery<{ content: any[]; totalElements: number }>({
+    queryKey: ['candidates', table.page, table.rowsPerPage, filters],
+    queryFn: () => fetchCandidates(table.page, table.rowsPerPage, filters.role, filters.name),
+    staleTime: 4 * 60 * 1000,
+    gcTime: 4 * 60 * 1000,
+  });
 
 // eslint-disable-next-line
-  const tableData = apiData ? transformApiDataToUserItems(apiData.content) : [];
-  const totalElements = apiData ? apiData.totalElements : 0;
+  const tableData = apiData?.content ? transformApiDataToUserItems(apiData.content as any[]) : [];
+  const totalElements = apiData?.totalElements ?? 0;
 
   const handleFilters = useCallback(
     (name: string, value: IUserTableFilterValue) => {

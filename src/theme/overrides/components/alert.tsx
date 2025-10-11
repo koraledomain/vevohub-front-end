@@ -21,8 +21,8 @@ export function alert(theme: Theme) {
       ...(ownerState.severity === color && {
         // STANDARD
         ...(standardVariant && {
-          color: theme.palette[color][lightMode ? 'darker' : 'lighter'],
-          backgroundColor: theme.palette[color][lightMode ? 'lighter' : 'darker'],
+          color: (theme.palette[color] as any)[lightMode ? 'darker' : 'lighter'] ?? theme.palette[color][lightMode ? 'dark' : 'light'],
+          backgroundColor: (theme.palette[color] as any)[lightMode ? 'lighter' : 'darker'] ?? theme.palette[color][lightMode ? 'light' : 'dark'],
           [`& .${alertClasses.icon}`]: {
             color: theme.palette[color][lightMode ? 'main' : 'light'],
           },
