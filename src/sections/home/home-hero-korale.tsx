@@ -55,7 +55,7 @@ const CoralAccent = styled('img')(({ theme }) => ({
 
 export default function HomeHeroKorale() {
   return (
-    <HeroRoot>
+    <HeroRoot id="hero">
       <CoralBackdrop src="/assets/korale/hero-coral-pattern.svg" alt="Korale coral texture" />
       <CoralAccent src="/assets/korale/hero-coral-reef.svg" alt="Korale coral reef" />
 
@@ -82,13 +82,20 @@ export default function HomeHeroKorale() {
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems={{ xs: 'stretch', sm: 'center' }}>
             <m.div variants={varFade().inUp}>
-              <Button size="large" color="secondary" variant="contained">
+              <Button size="large" color="secondary" variant="contained" component="a" href="#contact">
                 Build my Korale team
               </Button>
             </m.div>
 
             <m.div variants={varFade().inUp}>
-              <Button size="large" color="inherit" variant="outlined" sx={{ borderColor: alpha('#FFFFFF', 0.48) }}>
+              <Button
+                size="large"
+                color="inherit"
+                variant="outlined"
+                component="a"
+                href="#services"
+                sx={{ borderColor: alpha('#FFFFFF', 0.48) }}
+              >
                 Discover our playbooks
               </Button>
             </m.div>

@@ -44,7 +44,7 @@ const testimonials = [
 
 export default function HomeTestimonials() {
   return (
-    <Box component="section" sx={{ py: { xs: 12, md: 16 } }}>
+    <Box component="section" id="testimonials" sx={{ py: { xs: 12, md: 16 } }}>
       <Container maxWidth="lg">
         <Stack spacing={3} sx={{ textAlign: 'center', maxWidth: 720, mx: 'auto' }}>
           <Typography variant="overline" color="primary">

@@ -40,6 +40,7 @@ export default function HomeClientHighlights() {
   return (
     <Box
       component="section"
+      id="clients"
       sx={{
         py: { xs: 12, md: 16 },
         background: (theme) =>
