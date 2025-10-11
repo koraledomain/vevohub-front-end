@@ -14,10 +14,8 @@ import {MotionLazy} from 'src/components/animate/motion-lazy';
 import {SettingsDrawer, SettingsProvider} from 'src/components/settings';
 
 import {AuthProvider} from 'src/auth/context/jwt';
-import {QueryClientProvider} from "react-query";
-import {ReactQueryDevtools} from "react-query/devtools";
-import {FlagsmithProvider} from 'flagsmith/react';
-import flagsmith from "flagsmith";
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import {queryClient} from "./hooks/queryClient";
 // ----------------------------------------------------------------------
 //
@@ -36,9 +34,8 @@ export default function App() {
 
   useScrollToTop();
 
-//    <FlagsmithProvider flagsmith={flagsmith}></FlagsmithProvider>
+//    Feature flags provider removed (using local flags)
   return (
-    <FlagsmithProvider options={{environmentID: '2cU679ArYH6Vzm8rp95gPu'}} flagsmith={flagsmith}>
       <AuthProvider>
         <SettingsProvider
           defaultSettings
@@ -68,6 +65,5 @@ export default function App() {
           </ThemeProvider>
         </SettingsProvider>
       </AuthProvider>
-    </FlagsmithProvider>
   );
 }

@@ -1,9 +1,9 @@
 import { m } from 'framer-motion';
 
+import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
 import { paths } from 'src/routes/paths';
@@ -72,18 +72,17 @@ export default function HomeLookingFor() {
       }}
     >
       <Grid container alignItems="center" justifyContent="space-between" spacing={{ xs: 5, md: 0 }}>
-        <Grid xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           {renderDescription}
         </Grid>
-
-        <Grid xs={12} md={7}>
+        <Grid size={{ xs: 12, md: 7 }}>
           <m.div variants={varFade().inUp}>
             <Image disabledEffect alt="rocket" src="/assets/images/home/zone_landing.webp" />
           </m.div>
         </Grid>
 
         {!mdUp && (
-          <Grid xs={12} sx={{ textAlign: 'center' }}>
+          <Grid size={{ xs: 12 }} sx={{ textAlign: 'center' }}>
             {renderBtn}
           </Grid>
         )}

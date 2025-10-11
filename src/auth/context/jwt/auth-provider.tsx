@@ -167,20 +167,18 @@ export function AuthProvider({children}: Props) {
 
 
       const res = await axiosInstance.post(endpoints.auth.register, data);
-
-      const resLogin = await axiosInstance.post(endpoints.auth.login, {email, password});
-
-
-      let {user, accessToken, redirectURL, domain} = res.data;
+      const { user } = res.data;
+      let { accessToken, redirectURL, domain } = res.data;
 
       if (!accessToken) {
         const resLogin = await axiosInstance.post(endpoints.auth.login, {email, password});
-        accessToken = resLogin.data.accessToken;
+        const { accessToken: loginAccessToken, redirectURL: loginRedirectURL, domain: loginDomain } = resLogin.data;
+        accessToken = loginAccessToken;
         if (!redirectURL) {
-          redirectURL = resLogin.data.redirectURL;
+          redirectURL = loginRedirectURL;
         }
         if (!domain) {
-          domain = resLogin.data.domain;
+          domain = loginDomain;
         }
       }
 

@@ -1,10 +1,10 @@
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import { alpha } from '@mui/material/styles';
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Unstable_Grid2';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
@@ -89,14 +89,13 @@ export default function Footer() {
       >
         <Logo sx={{ mb: 3 }} />
 
-        <Grid
-          container
+        <Grid container
           justifyContent={{
             xs: 'center',
             md: 'space-between',
           }}
         >
-          <Grid xs={8} md={3}>
+          <Grid size={{ xs: 8, md: 3 }}>
             <Typography
               variant="body2"
               sx={{
@@ -131,7 +130,7 @@ export default function Footer() {
             </Stack>
           </Grid>
 
-          <Grid xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Stack spacing={5} direction={{ xs: 'column', md: 'row' }}>
               {LINKS.map((list) => (
                 <Stack

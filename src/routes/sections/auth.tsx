@@ -1,5 +1,7 @@
-import { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
+import React, { lazy, Suspense } from 'react';
+
+import { useFeatureFlag } from 'src/hooks/use-feature-flag';
 
 import { GuestGuard } from 'src/auth/guard';
 import AuthClassicLayout from 'src/layouts/auth/classic';
@@ -26,13 +28,7 @@ const authJwt = {
   children: [
     {
       path: 'login',
-      element: (
-        <GuestGuard>
-          <AuthClassicLayout>
-            <JwtLoginPage />
-          </AuthClassicLayout>
-        </GuestGuard>
-      ),
+      element: <LoginGate />,
     },
     {
       path: 'register',
@@ -61,3 +57,15 @@ export const authRoutes = [
     children: [authJwt],
   },
 ];
+
+function LoginGate() {
+  const enabled = useFeatureFlag('login');
+  if (!enabled) return null;
+  return (
+    <GuestGuard>
+      <AuthClassicLayout>
+        <JwtLoginPage />
+      </AuthClassicLayout>
+    </GuestGuard>
+  );
+}

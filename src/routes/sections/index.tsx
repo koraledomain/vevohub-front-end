@@ -2,12 +2,11 @@ import {Navigate, useRoutes} from 'react-router-dom';
 
 import {PATH_AFTER_LOGIN} from 'src/config-global';
 
-import { HomePage, mainRoutes } from './main';
 import {authRoutes} from './auth';
 import {dashboardRoutes} from './dashboard';
-import {useFeatureFlags} from "../../utils/featureflags";
-import DashboardLayout from "../../layouts/dashboard";
 import MainLayout from "../../layouts/main";
+import { HomePage, mainRoutes } from './main';
+import {useFeatureFlags} from "../../utils/featureflags";
 
 // ----------------------------------------------------------------------
 

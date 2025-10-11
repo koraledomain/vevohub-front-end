@@ -1,13 +1,23 @@
-## NODE.JS
+## Node.js
 
-- Node 16.x || 18.x
+- Use Node 18.x or newer (project sets engines ">=18.18").
 
-## USING YARN (Recommend)
+## Install & Run
 
+### Using Yarn (recommended)
 - yarn install
 - yarn dev
 
-## USING NPM
-
-- npm i OR npm i --legacy-peer-deps
+### Using npm
+- npm install
 - npm run dev
+
+## Useful scripts
+- yarn typecheck
+- yarn lint
+- yarn check (typecheck + lint)
+- yarn build
+
+## Feature flags
+- Local flags defined in `src/config/featureFlags.ts`.
+- Hook: `useFeatureFlag('login')` gates the login route (true to enable).

@@ -6,6 +6,7 @@ import Fab from '@mui/material/Fab';
 import Tab from '@mui/material/Tab';
 import Chip from '@mui/material/Chip';
 import Tabs from '@mui/material/Tabs';
+import Grid from '@mui/material/Grid';
 import Radio from '@mui/material/Radio';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
@@ -21,7 +22,6 @@ import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Unstable_Grid2';
 import IconButton from '@mui/material/IconButton';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
@@ -454,16 +454,16 @@ export default function HomeHugePackElements() {
       }}
     >
       <Grid container direction={{ xs: 'column', md: 'row-reverse' }} spacing={5}>
-        <Grid xs={12} md={5}>
+        <Grid size={{ xs: 12, md: 5 }}>
           {renderDescription}
         </Grid>
 
-        <Grid xs={12} md={7}>
+        <Grid size={{ xs: 12, md: 7 }}>
           {renderContent}
         </Grid>
 
         {!mdUp && (
-          <Grid xs={12} sx={{ textAlign: 'center' }}>
+          <Grid size={{ xs: 12 }} sx={{ textAlign: 'center' }}>
             {viewAllBtn}
           </Grid>
         )}

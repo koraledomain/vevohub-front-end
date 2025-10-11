@@ -3,7 +3,7 @@ import {useForm} from "react-hook-form";
 
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 
 import {countries} from "../../assets/data";
 import {PreviewComponentProps} from "./types/types";
@@ -17,7 +17,7 @@ export default function AddressPreview({disabled = false, id = ''}: PreviewCompo
   return (
     <FormProvider methods={methods}>
       <Grid container spacing={3}>
-        <Grid xs={12} md={10}>
+        <Grid size={{ xs: 12, md: 10 }}>
           <Card sx={{p: 3}}>
             <Box
               rowGap={3}
@@ -46,7 +46,7 @@ export default function AddressPreview({disabled = false, id = ''}: PreviewCompo
           </Card>
         </Grid>
 
-        <Grid xs={12} md={8}/>
+        <Grid size={{ xs: 12, md: 8 }}/>
       </Grid>
     </FormProvider>)
 }

@@ -3,11 +3,11 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Rating from '@mui/material/Rating';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import { alpha, styled, useTheme } from '@mui/material/styles';
 
@@ -76,7 +76,7 @@ const StyledEllipseTop = styled('div')(({ theme }) => ({
   position: 'absolute',
   filter: 'blur(100px)',
   WebkitFilter: 'blur(100px)',
-  backgroundColor: alpha(theme.palette.primary.darker, 0.12),
+  backgroundColor: alpha((theme.palette.primary as any).darker ?? theme.palette.primary.dark, 0.12),
 }));
 
 const StyledEllipseBottom = styled('div')(({ theme }) => ({
@@ -88,7 +88,7 @@ const StyledEllipseBottom = styled('div')(({ theme }) => ({
   position: 'absolute',
   filter: 'blur(100px)',
   WebkitFilter: 'blur(100px)',
-  backgroundColor: alpha(theme.palette.primary.darker, 0.12),
+  backgroundColor: alpha((theme.palette.primary as any).darker ?? theme.palette.primary.dark, 0.12),
 }));
 
 type StyledPolygonProps = {
@@ -412,11 +412,11 @@ export default function HomeHero() {
         <StyledWrapper>
           <Container component={MotionContainer} sx={{ height: 1 }}>
             <Grid container columnSpacing={{ md: 10 }} sx={{ height: 1 }}>
-              <Grid xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 {renderDescription}
               </Grid>
 
-              {mdUp && <Grid md={6}>{renderSlides}</Grid>}
+              {mdUp && <Grid size={{ md: 6 }}>{renderSlides}</Grid>}
             </Grid>
           </Container>
 
