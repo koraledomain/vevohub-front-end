@@ -11,6 +11,7 @@ export default function HomeContactCta() {
   return (
     <Box
       component="section"
+      id="contact"
       sx={{
         py: { xs: 12, md: 16 },
         background: (theme) =>
@@ -34,11 +35,18 @@ export default function HomeContactCta() {
             leadership and onboarding rituals tailored for your context.
           </Typography>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-            <Button size="large" color="inherit" variant="contained">
+            <Button size="large" color="inherit" variant="contained" component="a" href="mailto:hello@korale.studio">
               Book a discovery call
             </Button>
-            <Button size="large" color="inherit" variant="outlined" sx={{ borderColor: alpha('#FFFFFF', 0.5) }}>
-              Download Korale overview
+            <Button
+              size="large"
+              color="inherit"
+              variant="outlined"
+              component="a"
+              href="#clients"
+              sx={{ borderColor: alpha('#FFFFFF', 0.5) }}
+            >
+              Explore client stories
             </Button>
           </Stack>
         </Stack>

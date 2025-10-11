@@ -3,7 +3,7 @@ import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import { alpha, styled } from '@mui/material/styles';
 
@@ -44,7 +44,7 @@ const capabilities = [
 
 export default function HomeServices() {
   return (
-    <Box component="section" sx={{ py: { xs: 12, md: 16 } }}>
+    <Box component="section" id="services" sx={{ py: { xs: 12, md: 16 } }}>
       <Container maxWidth="lg">
         <Stack spacing={3} sx={{ textAlign: { xs: 'left', md: 'center' }, maxWidth: 720, mx: { md: 'auto' } }}>
           <Typography variant="overline" color="primary">Korale capabilities</Typography>
@@ -59,7 +59,7 @@ export default function HomeServices() {
 
         <Grid container spacing={4} sx={{ mt: { xs: 6, md: 8 } }}>
           {capabilities.map((capability) => (
-            <Grid key={capability.title} size={{ xs: 12, md: 4 }}>
+            <Grid key={capability.title} xs={12} md={4}>
               <CapabilityCard>
                 <Stack spacing={3}>
                   <Box>
