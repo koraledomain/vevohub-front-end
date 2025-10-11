@@ -17,7 +17,7 @@ export const navConfig = [
   },
   {
     title: 'Get Started',
-    icon: <Iconify icon="solar:home-2-bold-duotone"/>,
-    path: paths.auth.jwt.register,
+    icon: <Iconify icon="solar:rocket-3-bold-duotone"/>,
+    path: '/#contact',
   },
 ];
