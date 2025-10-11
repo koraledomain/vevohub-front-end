@@ -1,3 +1,6 @@
+## Feature Flags
+
+See docs/FEATURE_FLAGS.md for copy-paste examples (before/after for routes, buttons, and nav).
 ## Node.js
 
 - Use Node 18.x or newer (project sets engines ">=18.18").

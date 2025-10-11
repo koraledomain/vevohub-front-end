@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 import React, { lazy, Suspense } from 'react';
 
 import { useFeatureFlag } from 'src/hooks/use-feature-flag';
@@ -60,7 +60,7 @@ export const authRoutes = [
 
 function LoginGate() {
   const enabled = useFeatureFlag('login');
-  if (!enabled) return null;
+  if (!enabled) return <Navigate to="/" replace />;
   return (
     <GuestGuard>
       <AuthClassicLayout>
