@@ -19,13 +19,15 @@ export default function HomeView() {
     <>
       <ScrollProgress scrollYProgress={scrollYProgress} />
 
-      <HomeHeroKorale />
+      <Box component="main">
+        <HomeHeroKorale />
 
-      <Box component="div" sx={{ bgcolor: 'background.default' }}>
-        <HomeServices />
-        <HomeClientHighlights />
-        <HomeTestimonials />
-        <HomeContactCta />
+        <Box component="div" sx={{ bgcolor: 'background.default' }}>
+          <HomeServices />
+          <HomeClientHighlights />
+          <HomeTestimonials />
+          <HomeContactCta />
+        </Box>
       </Box>
     </>
   );
