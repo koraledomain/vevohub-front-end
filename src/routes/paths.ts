@@ -37,6 +37,7 @@ export const paths = {
   // DASHBOARD
   dashboard: {
     root: ROOTS.DASHBOARD,
+    chat: `${ROOTS.DASHBOARD}/chat`,
     profiles: {
       root: `${ROOTS.DASHBOARD}/profiles`,
       list: `${ROOTS.DASHBOARD}/profiles/list`,

@@ -28,13 +28,15 @@ function Container({ children }: Props) {
 
   const returnTo = searchParams.get('returnTo') || paths.dashboard.root;
 
-  const { authenticated } = useAuthContext();
+  const { authenticated, loading } = useAuthContext();
 
   const check = useCallback(() => {
-    if (authenticated) {
+    // Only redirect if authenticated and not currently loading
+    // This prevents redirect loops and race conditions
+    if (authenticated && !loading) {
       router.replace(returnTo);
     }
-  }, [authenticated, returnTo, router]);
+  }, [authenticated, loading, returnTo, router]);
 
   useEffect(() => {
     check();

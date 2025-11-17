@@ -28,6 +28,10 @@ const UserCreatePage = lazy(() => import('src/pages/dashboard/profiles/new'));
 const ProfileEditPage = lazy(() => import('src/pages/dashboard/profiles/edit'));
 
 
+//APP CHAT
+
+const ChatPage = lazy(() => import('src/pages/dashboard/chat'));
+
 export const dashboardRoutes = (flags: any) => {
   const {isProfilePageEnabled} = flags
   return [
@@ -47,6 +51,7 @@ export const dashboardRoutes = (flags: any) => {
           {element: <IndexPage/>, index: true},
         ] : [])
         ,
+        {path: 'chat', element: <ChatPage/>},
         {
           path: 'gdpr', children: [
             {path: 'form-builder', element: <FormBuilder/>},

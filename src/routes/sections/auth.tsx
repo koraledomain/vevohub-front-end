@@ -59,6 +59,8 @@ export const authRoutes = [
 ];
 
 function LoginGate() {
+
+  //TODO: we need to hide the React components not route to different direction.
   const enabled = useFeatureFlag('login');
   if (!enabled) return <Navigate to="/" replace />;
   return (

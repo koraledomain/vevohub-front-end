@@ -1,7 +1,7 @@
 import { _mock } from 'src/_mock';
 
 import { User } from '../auth/types';
-import axiosInstance from '../utils/axios';
+import api from '../utils/api';
 import { getAccountId } from '../auth/context/jwt/utils';
 
 // TO GET THE USER FROM THE AUTHCONTEXT, YOU CAN USE
@@ -20,8 +20,8 @@ import { getAccountId } from '../auth/context/jwt/utils';
 
 export async function fetchUser() {
   try {
-    const response = await axiosInstance.get(`https://decorous-volcano-production.up.railway.app/users/${getAccountId()}`);
-    return response.data;
+    const response = await api.get(`https://decorous-volcano-production.up.railway.app/users/${getAccountId()}`);
+    return response;
   } catch (error) {
     console.error('Error fetching data', error);
     return [];
