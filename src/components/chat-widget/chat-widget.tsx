@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import {useState, useRef, useEffect} from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
 import Iconify from 'src/components/iconify';
+import {useSocket} from "../../hooks/use-socket";
 
 // ----------------------------------------------------------------------
 
@@ -25,27 +26,49 @@ type ChatWidgetProps = {
   isOnline?: boolean;
 };
 
-export default function ChatWidget({ 
-  brandName = 'AI Assistant',
-  brandLogo,
-  isOnline = true 
-}: ChatWidgetProps) {
+export default function ChatWidget({
+                                     brandName = 'AI Assistant',
+                                     brandLogo,
+                                     isOnline = true
+                                   }: ChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       text: 'Hello! How can I help you today?',
       sender: 'system',
-      timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      timestamp: new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'}),
     },
   ]);
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const socket = useSocket("http://localhost:4000");
+
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({behavior: 'smooth'});
   };
+
+  useEffect(() => {
+    const socketInstance = socket.current;
+    if (!socketInstance) return;
+
+    // We define the handler function inside the effect to keep concerns
+    const handleNewMessage = (msg: Message) => {
+      setMessages((prev) => [...prev, msg]);
+    }
+
+    socketInstance.on("newMessage", handleNewMessage);
+
+
+    // CLEANUP: Return a function to remove the listener when the component unmounts
+    return () => {
+      socketInstance.off("newMessage", handleNewMessage);
+    };
+
+  }, [socket]);
 
   useEffect(() => {
     scrollToBottom();
@@ -53,15 +76,17 @@ export default function ChatWidget({
 
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
+    if (!socket.current) return;
+    socket.current?.emit("sendMessage", inputValue);
 
     const newMessage: Message = {
       id: Date.now().toString(),
       text: inputValue,
       sender: 'user',
-      timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      timestamp: new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'}),
     };
 
-    setMessages((prev) => [...prev, newMessage]);
+    // setMessages((prev) => [...prev, newMessage]);
     setInputValue('');
 
     // Simulate AI response
@@ -70,9 +95,9 @@ export default function ChatWidget({
         id: (Date.now() + 1).toString(),
         text: 'Thank you for your message! I\'m here to help.',
         sender: 'system',
-        timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        timestamp: new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'}),
       };
-      setMessages((prev) => [...prev, aiResponse]);
+      // setMessages((prev) => [...prev, aiResponse]);
     }, 1000);
   };
 
@@ -97,11 +122,11 @@ export default function ChatWidget({
         <Button
           variant="contained"
           onClick={() => setIsOpen(true)}
-          startIcon={<Iconify icon="solar:chat-round-dots-bold" />}
+          startIcon={<Iconify icon="solar:chat-round-dots-bold"/>}
           sx={{
             borderRadius: 2,
             boxShadow: 3,
-            minWidth: { xs: 120, sm: 160 },
+            minWidth: {xs: 120, sm: 160},
           }}
         >
           {brandName}
@@ -124,11 +149,11 @@ export default function ChatWidget({
         <Button
           variant="contained"
           onClick={() => setIsMinimized(false)}
-          startIcon={<Iconify icon="solar:chat-round-dots-bold" />}
+          startIcon={<Iconify icon="solar:chat-round-dots-bold"/>}
           sx={{
             borderRadius: 2,
             boxShadow: 3,
-            minWidth: { xs: 120, sm: 160 },
+            minWidth: {xs: 120, sm: 160},
           }}
         >
           {brandName}
@@ -143,9 +168,9 @@ export default function ChatWidget({
         position: 'fixed',
         bottom: 24,
         right: 24,
-        width: { xs: 'calc(100% - 48px)', sm: 400 },
-        height: { xs: 'calc(100vh - 48px)', sm: 600 },
-        maxHeight: { xs: 'calc(100vh - 48px)', sm: 600 },
+        width: {xs: 'calc(100% - 48px)', sm: 400},
+        height: {xs: 'calc(100vh - 48px)', sm: 600},
+        maxHeight: {xs: 'calc(100vh - 48px)', sm: 600},
         display: 'flex',
         flexDirection: 'column',
         borderRadius: 2,
@@ -178,7 +203,7 @@ export default function ChatWidget({
             />
           )}
           <Box>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+            <Typography variant="subtitle2" sx={{fontWeight: 600}}>
               {brandName}
             </Typography>
             <Stack direction="row" spacing={0.5} alignItems="center">
@@ -190,7 +215,7 @@ export default function ChatWidget({
                   bgcolor: isOnline ? 'success.main' : 'grey.500',
                 }}
               />
-              <Typography variant="caption" sx={{ opacity: 0.9 }}>
+              <Typography variant="caption" sx={{opacity: 0.9}}>
                 {isOnline ? 'Online' : 'Offline'}
               </Typography>
             </Stack>
@@ -200,16 +225,16 @@ export default function ChatWidget({
           <IconButton
             size="small"
             onClick={() => setIsMinimized(true)}
-            sx={{ color: 'primary.contrastText' }}
+            sx={{color: 'primary.contrastText'}}
           >
-            <Iconify icon="solar:minimise-square-bold" />
+            <Iconify icon="solar:minimise-square-bold"/>
           </IconButton>
           <IconButton
             size="small"
             onClick={() => setIsOpen(false)}
-            sx={{ color: 'primary.contrastText' }}
+            sx={{color: 'primary.contrastText'}}
           >
-            <Iconify icon="solar:close-circle-bold" />
+            <Iconify icon="solar:close-circle-bold"/>
           </IconButton>
         </Stack>
       </Box>
@@ -245,7 +270,7 @@ export default function ChatWidget({
                   bgcolor: 'primary.main',
                 }}
               >
-                <Iconify icon="solar:chat-round-dots-bold" width={20} />
+                <Iconify icon="solar:chat-round-dots-bold" width={20}/>
               </Avatar>
             )}
             <Box
@@ -259,7 +284,7 @@ export default function ChatWidget({
                 boxShadow: 1,
               }}
             >
-              <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+              <Typography variant="body2" sx={{whiteSpace: 'pre-wrap'}}>
                 {message.text}
               </Typography>
               <Typography
@@ -282,12 +307,12 @@ export default function ChatWidget({
                   bgcolor: 'grey.300',
                 }}
               >
-                <Iconify icon="solar:user-bold" width={20} />
+                <Iconify icon="solar:user-bold" width={20}/>
               </Avatar>
             )}
           </Stack>
         ))}
-        <div ref={messagesEndRef} />
+        <div ref={messagesEndRef}/>
       </Box>
 
       {/* Input */}
@@ -330,7 +355,7 @@ export default function ChatWidget({
               },
             }}
           >
-            <Iconify icon="solar:plain-2-bold" />
+            <Iconify icon="solar:plain-2-bold"/>
           </IconButton>
         </Stack>
       </Box>
