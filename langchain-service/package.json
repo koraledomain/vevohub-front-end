@@ -4,13 +4,14 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@langchain/core": "^1.0.6",
+    "@langchain/core": "^1.0.0-alpha.7",
     "@langchain/langgraph": "^1.0.2",
     "@langchain/openai": "^1.1.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^4.18.2",
-    "langchain": "^1.0.6",
+    "langchain": "^1.0.0-alpha.9",
+    "langsmith": "^0.3.81",
     "zod": "^3.22.4"
   },
   "devDependencies": {

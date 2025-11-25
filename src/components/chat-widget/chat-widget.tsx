@@ -55,19 +55,25 @@ export default function ChatWidget({
     const socketInstance = socket.current;
     if (!socketInstance) return;
 
-    // We define the handler function inside the effect to keep concerns
+    // Handle incoming messages from socket.io server
     const handleNewMessage = (msg: Message) => {
-      setMessages((prev) => [...prev, msg]);
-    }
+      // Convert ISO timestamp to locale time string for display
+      const formattedMessage: Message = {
+        ...msg,
+        timestamp: new Date(msg.timestamp).toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+      };
+      setMessages((prev) => [...prev, formattedMessage]);
+    };
 
     socketInstance.on("newMessage", handleNewMessage);
-
 
     // CLEANUP: Return a function to remove the listener when the component unmounts
     return () => {
       socketInstance.off("newMessage", handleNewMessage);
     };
-
   }, [socket]);
 
   useEffect(() => {
@@ -77,28 +83,10 @@ export default function ChatWidget({
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
     if (!socket.current) return;
-    socket.current?.emit("sendMessage", inputValue);
-
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      text: inputValue,
-      sender: 'user',
-      timestamp: new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'}),
-    };
-
-    // setMessages((prev) => [...prev, newMessage]);
+    
+    // Send message via socket.io - the server will handle user message and AI response
+    socket.current.emit("sendMessage", inputValue);
     setInputValue('');
-
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        text: 'Thank you for your message! I\'m here to help.',
-        sender: 'system',
-        timestamp: new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'}),
-      };
-      // setMessages((prev) => [...prev, aiResponse]);
-    }, 1000);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

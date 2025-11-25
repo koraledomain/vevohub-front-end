@@ -2,7 +2,6 @@ import {Server} from "socket.io";
 import {createServer} from "http";
 import {ClientToServerEvents, InterServerEvents, ServerToClientEvents, SocketData, Message} from "../types/types";
 
-
 const httpServer = createServer();
 
 const io = new Server<
@@ -16,34 +15,88 @@ const io = new Server<
   }
 });
 
+// Langchain service URL
+const LANGCHAIN_SERVICE_URL = process.env.LANGCHAIN_SERVICE_URL || "http://localhost:3001";
+
+/**
+ * Call the langchain service to get AI response
+ */
+async function getAIResponse(userMessage: string): Promise<string> {
+  try {
+    const response = await fetch(`${LANGCHAIN_SERVICE_URL}/agent`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: userMessage }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Langchain service error: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    return data.response || "Sorry, I couldn't generate a response.";
+  } catch (error) {
+    console.error("Error calling langchain service:", error);
+    if (error instanceof Error) {
+      return `Error: ${error.message}`;
+    }
+    return "Sorry, I encountered an error while processing your request.";
+  }
+}
+
 io.on("connection", (socket) => {
-   console.log("Client connected:", socket.id);
+  console.log("Client connected:", socket.id);
 
-    // --- All socket event listeners should be defined here ---
+  socket.on("sendMessage", async (text) => {
+    console.log("Received message from client:", text);
+    
+    // Create user message
+    const userMessage: Message = {
+      id: crypto.randomUUID(),
+      text,
+      sender: "user",
+      timestamp: new Date().toISOString(),
+      avatar: undefined,
+    };
 
-    // server → client events (emitted immediately on connection)
-    socket.emit("noArg");
-    socket.emit("basicEmit", 1, "hello", Buffer.from([3]));
-    socket.emit("withAck", 1, "test", Buffer.from([42]));
+    // Emit user message immediately
+    socket.emit("newMessage", userMessage);
 
-    socket.on("sendMessage", (text) => {
-      console.log("I AM HERE DID I SENT A MESSAGE. Received text:", text);
-      const message: Message = {
+    // Get AI response from langchain service
+    try {
+      const aiResponseText = await getAIResponse(text);
+      
+      // Create AI response message
+      const aiMessage: Message = {
         id: crypto.randomUUID(),
-        text,
-        sender: "user",        // or choose logic later
+        text: aiResponseText,
+        sender: "system",
         timestamp: new Date().toISOString(),
         avatar: undefined,
       };
 
-      io.emit("newMessage", message);
-    });
-
-    socket.on('disconnect', () => {
-      console.log('user disconnected');
-    });
-
+      // Emit AI response
+      socket.emit("newMessage", aiMessage);
+    } catch (error) {
+      console.error("Error processing message:", error);
+      const errorMessage: Message = {
+        id: crypto.randomUUID(),
+        text: "Sorry, I encountered an error. Please try again.",
+        sender: "system",
+        timestamp: new Date().toISOString(),
+        avatar: undefined,
+      };
+      socket.emit("newMessage", errorMessage);
+    }
   });
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
+  });
+});
 
 
 const PORT = 4000;
