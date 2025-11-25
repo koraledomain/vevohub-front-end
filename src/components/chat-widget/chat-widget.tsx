@@ -1,4 +1,4 @@
-import {useState, useRef, useEffect} from 'react';
+import {useState, useRef, useEffect, useMemo} from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
@@ -9,6 +9,7 @@ import IconButton from '@mui/material/IconButton';
 
 import Iconify from 'src/components/iconify';
 import {useSocket} from "../../hooks/use-socket";
+import {useAuthContext} from "../../auth/hooks/use-auth-context";
 
 // ----------------------------------------------------------------------
 
@@ -45,7 +46,19 @@ export default function ChatWidget({
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const socket = useSocket("http://localhost:4000");
+  const {user} = useAuthContext();
+
+  const authToken = useMemo(() => {
+    if (user?.accessToken) {
+      return user.accessToken;
+    }
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('accessToken') || undefined;
+    }
+    return undefined;
+  }, [user?.accessToken]);
+
+  const socket = useSocket("http://localhost:4000", authToken);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({behavior: 'smooth'});
@@ -83,9 +96,12 @@ export default function ChatWidget({
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
     if (!socket.current) return;
-    
-    // Send message via socket.io - the server will handle user message and AI response
-    socket.current.emit("sendMessage", inputValue);
+
+    // Send message via socket.io - include JWT so downstream services can act on behalf of the user
+    socket.current.emit("sendMessage", {
+      text: inputValue,
+      token: authToken,
+    });
     setInputValue('');
   };
 

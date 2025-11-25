@@ -33,8 +33,13 @@ app.post("/agent", async (req, res) => {
       });
     }
 
+    const authHeader = req.get("authorization");
+    const tokenMatch = authHeader?.startsWith("Bearer ")
+      ? authHeader.slice("Bearer ".length).trim()
+      : undefined;
+
     // Process the message through the agent
-    const response = await handleUserInput(message);
+    const response = await handleUserInput(message, {authToken: tokenMatch});
 
     // Return the AI response
     res.json({

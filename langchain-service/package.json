@@ -18,14 +18,14 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^4.17.21",
     "@types/node": "^24.10.1",
-    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.15.7",
     "typescript": "^5.9.3"
   },
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "dev:debug": "ts-node-dev --inspect=0.0.0.0:9229 --respawn --transpile-only src/server.ts",
-    "debug:simple": "node --inspect-brk=0.0.0.0:9229 -r ts-node/register src/server.ts",
-    "start": "ts-node src/server.ts",
+    "dev": "tsx watch --clear-screen=false src/server.ts",
+    "dev:debug": "NODE_OPTIONS='--inspect=0.0.0.0:9229' tsx watch --clear-screen=false src/server.ts",
+    "debug:simple": "NODE_OPTIONS='--inspect-brk=0.0.0.0:9229' tsx src/server.ts",
+    "start": "tsx src/server.ts",
     "build": "tsc"
   }
 }
