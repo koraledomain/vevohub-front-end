@@ -2,25 +2,38 @@
  * Simple OpenAPI to JSON Schema converter for LangChain tools
  */
 
-function convertSchema(schema: any, components: any): any {
+function convertSchema(schema: any, components: any, visited: Set<string> = new Set()): any {
   if (!schema) return { type: 'string' };
 
   // Resolve $ref
+  let schemaName: string | null = null;
   if (schema.$ref) {
-    const name = schema.$ref.replace('#/components/schemas/', '');
-    schema = components?.schemas?.[name] || { type: 'object' };
+    schemaName = schema.$ref.replace('#/components/schemas/', '');
+    
+    // Check for circular reference
+    if (visited.has(schemaName)) {
+      // Return a simple object type to break the cycle
+      return { type: 'object', description: `Reference to ${schemaName}` };
+    }
+    
+    visited.add(schemaName);
+    schema = components?.schemas?.[schemaName] || { type: 'object' };
   }
 
   // Arrays
   if (schema.type === 'array') {
-    return { type: 'array', items: convertSchema(schema.items, components) };
+    return { 
+      type: 'array', 
+      items: convertSchema(schema.items, components, visited) 
+    };
   }
 
   // Objects
   if (schema.type === 'object' && schema.properties) {
     const properties: Record<string, any> = {};
     for (const [key, value] of Object.entries(schema.properties)) {
-      properties[key] = convertSchema(value, components);
+      // Pass visited set to detect circular references
+      properties[key] = convertSchema(value, components, visited);
     }
     return { type: 'object', properties, required: schema.required || [] };
   }
