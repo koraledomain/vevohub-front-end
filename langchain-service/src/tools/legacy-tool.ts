@@ -1,7 +1,7 @@
 import { tool } from "@langchain/core/tools";
 import * as z from "zod";
 import { traceable } from "langsmith/traceable";
-import type { components } from "../../src/types/api/generated";
+import type { components } from "../../../src/types/api/generated";
 
 // Zod schema for the tool input - this validates and provides type safety
 const callJavaAPISchema = z.object({
@@ -74,3 +74,4 @@ export const createCallJavaAPITool = (authToken?: string) =>
       required: ["query"],
     },
   });
+

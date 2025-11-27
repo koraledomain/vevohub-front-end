@@ -1,7 +1,7 @@
 import { traceable } from "langsmith/traceable";
 import { createAgent } from "langchain";
 import { ChatNvidia } from "./models/nvidia-chat";
-import { createCallJavaAPITool } from "./tools";
+import { createToolsFromOpenAPI } from "./tools/index";
 
 type HandleUserInputOptions = {
   authToken?: string | undefined;
@@ -27,9 +27,14 @@ export const handleUserInput = traceable(
         maxTokens: 512,
       });
 
+      // Generate all tools from OpenAPI spec
+      console.log("[DEBUG] Generating tools from OpenAPI spec...");
+      const tools = createToolsFromOpenAPI(authToken);
+      console.log(`[DEBUG] Generated ${tools.length} tools from OpenAPI spec`);
+
       const agent = createAgent({
         model,
-        tools: [createCallJavaAPITool(authToken)],
+        tools,
       });
 
       console.log("[DEBUG] Invoking agent...");

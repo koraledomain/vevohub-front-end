@@ -245,8 +245,12 @@ app.post("/agent", async (req, res) => {
 **Purpose**: Orchestrates AI model and tools
 
 ```typescript
-export async function handleUserInput(userText: string): Promise<string> {
-  // 1. Initialize NVIDIA AI model
+type HandleUserInputOptions = { authToken?: string };
+
+export async function handleUserInput(
+  userText: string,
+  options: HandleUserInputOptions = {}
+): Promise<string> {
   const model = new ChatNvidia({
     model: "meta/llama-4-maverick-17b-128e-instruct",
     apiKey: process.env.NVIDIA_API_KEY,
@@ -254,26 +258,39 @@ export async function handleUserInput(userText: string): Promise<string> {
     maxTokens: 512,
   });
 
-  // 2. Create agent with model and tools
   const agent = createAgent({
     model,
-    tools: [callJavaAPI], // Tool for calling Java backend
+    tools: [createCallJavaAPITool(options.authToken)],
   });
 
-  // 3. Invoke agent with user message
   const response = await agent.invoke({
     messages: [{ role: "user", content: userText }],
   });
 
-  // 4. Extract and return response text
   if (response?.messages && Array.isArray(response.messages)) {
     const lastMessage = response.messages[response.messages.length - 1];
     return String(lastMessage.content);
   }
-  
+
   return JSON.stringify(response);
 }
 ```
+
+### OpenAPI contract + generated types
+
+- Source spec lives in `docs/api/openapi.json`. Update it via `yarn openapi:pull` (pulls from Java's `/v3/api-docs` by default) or edit it by hand when adding endpoints.
+- Regenerate TypeScript bindings with `yarn openapi:types` (or `yarn openapi:sync` to fetch + generate).
+- Consume the types anywhere in the repo:
+
+```typescript
+import type {components} from 'src/types/api/generated';
+
+type QueryResponse = components['schemas']['QueryResponse'];
+
+const result = await api.post<QueryResponse>('/api/query', { query: prompt });
+```
+
+Keeping the spec + generated types in sync ensures both the frontend and LangChain tools always match the Java contract.
 
 **What it does**:
 1. Creates NVIDIA AI model instance
@@ -343,37 +360,40 @@ async _generate(messages: BaseMessage[]): Promise<ChatResult> {
 **Purpose**: Allow AI to call Java backend APIs
 
 ```typescript
-export const callJavaAPI = tool(
-  async (input: unknown) => {
-    // 1. Validate input
-    const validatedInput = callJavaAPISchema.parse(input);
-    
-    // 2. Call Java backend
-    const res = await fetch("http://localhost:8081/api/query", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query: validatedInput.query }),
-    });
+export const createCallJavaAPITool = (authToken?: string) =>
+  tool(
+    async (input: unknown) => {
+      const validatedInput = callJavaAPISchema.parse(input);
 
-    // 3. Return result
-    const data = await res.json();
-    return JSON.stringify(data);
-  },
-  {
-    name: "call_java_api",
-    description: "Queries the Java backend REST API for data or to perform actions.",
-    schema: {
-      type: "object",
-      properties: {
-        query: {
-          type: "string",
-          description: "The user's query to send to the Java backend API",
-        },
-      },
-      required: ["query"],
+      const headers: Record<string, string> = {"Content-Type": "application/json"};
+      if (authToken) {
+        headers.Authorization = `Bearer ${authToken}`;
+      }
+
+      const res = await fetch("http://localhost:8081/api/query", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({query: validatedInput.query}),
+      });
+
+      const data = await res.json();
+      return JSON.stringify(data);
     },
-  }
-);
+    {
+      name: "call_java_api",
+      description: "Queries the Java backend REST API for data or to perform actions.",
+      schema: {
+        type: "object",
+        properties: {
+          query: {
+            type: "string",
+            description: "The user's query to send to the Java backend API",
+          },
+        },
+        required: ["query"],
+      },
+    }
+  );
 ```
 
 **What it does**:
@@ -384,7 +404,7 @@ export const callJavaAPI = tool(
 
 **How AI uses tools**:
 - AI analyzes user message
-- If it needs data (e.g., "get user profile"), it calls `callJavaAPI`
+- If it needs data (e.g., "get user profile"), it calls the `call_java_api` tool (via `createCallJavaAPITool`)
 - Tool executes and returns data
 - AI uses that data to form final response
 
@@ -392,7 +412,7 @@ export const callJavaAPI = tool(
 ```
 User: "What's my account balance?"
   ↓
-AI: "I need to check the backend" → calls callJavaAPI("get account balance")
+AI: "I need to check the backend" → invokes call_java_api tool with "get account balance"
   ↓
 Tool: Calls Java API → Returns balance: $1,234
   ↓
@@ -409,37 +429,40 @@ AI: "Your account balance is $1,234"
 
 1. **Frontend** (`chat-widget.tsx`)
    ```typescript
-   socket.current.emit("sendMessage", "Hello, what can you do?");
+   socket.current.emit("sendMessage", {
+     text: "Hello, what can you do?",
+     token: sessionStorage.getItem("accessToken")
+   });
    ```
 
 2. **Socket.io Server** (`socket-io-server/src/index.ts`)
    ```typescript
-   // Receives message
-   socket.on("sendMessage", async (text) => {
-     // Emit user message immediately
+   socket.on("sendMessage", async ({ text, token }) => {
      socket.emit("newMessage", userMessage);
-     
-     // Call langchain service
-     const aiResponse = await getAIResponse(text);
-     
-     // Emit AI response
+
+     const aiResponse = await getAIResponse(text, token);
+
      socket.emit("newMessage", aiMessage);
    });
    ```
 
 3. **LangChain Service** (`langchain-service/src/server.ts`)
    ```typescript
-   // Receives HTTP POST
    app.post("/agent", async (req, res) => {
-     const response = await handleUserInput(req.body.message);
+     const token = req.get("authorization");
+     const response = await handleUserInput(req.body.message, {
+       authToken: token?.replace("Bearer ", "")
+     });
      res.json({ response });
    });
    ```
 
 4. **Agent** (`langchain-service/src/agent.ts`)
    ```typescript
-   // Creates agent and processes message
-   const agent = createAgent({ model, tools: [callJavaAPI] });
+   const agent = createAgent({
+     model,
+     tools: [createCallJavaAPITool(options.authToken)]
+   });
    const response = await agent.invoke({ messages: [...] });
    ```
 
@@ -478,17 +501,12 @@ AI: "Your account balance is $1,234"
 ### Step 1: Install Dependencies
 
 ```bash
-# Frontend
-yarn install
-
-# LangChain Service
-cd langchain-service
-yarn install
-
-# Socket.io Server
-cd ../socket-io-server
+# Installs root app + workspaces (langchain-service, socket-io-server)
 yarn install
 ```
+
+> The repo now uses Yarn workspaces, so a single `yarn install` from the root links
+> dependencies for every service.
 
 ### Step 2: Environment Variables
 
@@ -504,25 +522,40 @@ LANGCHAIN_SERVICE_URL=http://localhost:3001
 
 ### Step 3: Start Services
 
-**Terminal 1 - LangChain Service**:
+**Preferred – Single Orchestrator Command**
+
 ```bash
-cd langchain-service
-yarn dev
-# Should see: "LangChain service running on http://localhost:3001"
+yarn dev:all
+# fe (Vite) -> http://localhost:8081
+# langchain-service -> http://localhost:3001
+# socket-io-server -> http://localhost:4000
 ```
 
-**Terminal 2 - Socket.io Server**:
+`dev:all` uses `concurrently` to stream logs with colored prefixes. Press `Ctrl+C`
+once to stop all child processes together.
+
+**Run Individually (optional)**
+
 ```bash
-cd socket-io-server
+# Frontend only
 yarn dev
-# Should see: "Socket.IO server running on http://localhost:4000"
+
+# LangChain service only
+yarn dev:langchain
+
+# Socket.io server only
+yarn dev:socket
 ```
 
-**Terminal 3 - Frontend**:
-```bash
-yarn dev
-# Should see: "Local: http://localhost:8081"
-```
+# JWT propagation flow
+
+1. **Browser** – After login, the JWT lives in `sessionStorage`.
+2. **Chat widget** – `useSocket` attaches the token to the Socket.IO handshake (`auth.token`) and `handleSendMessage` emits `sendMessage` with `{ text, token }`.
+3. **Socket.IO server** – Handshake middleware decodes the JWT, rejects expired tokens (unless `SOCKET_REQUIRE_AUTH=false`), stores `{ token, userId }` on `socket.data`, and forwards the header to the LangChain service.
+4. **LangChain service** – Extracts the header inside `/agent` and calls `handleUserInput(message, { authToken })`.
+5. **LangChain tools** – `createCallJavaAPITool(authToken)` injects the same token when calling `http://localhost:8081/api/query`, so the Java API still enforces its own authorization rules.
+
+If the token is missing or expired, the tool simply omits the header and the Java API responds with the appropriate 401/403 error, which is surfaced back to the chat.
 
 ### Step 4: Test
 
@@ -530,6 +563,21 @@ yarn dev
 2. Click chat widget button
 3. Type a message
 4. See AI response appear!
+
+### Step 5: Sync OpenAPI Contract (optional but recommended)
+
+```bash
+# Pull the latest OpenAPI JSON from the Java backend
+yarn openapi:pull
+
+# Regenerate TypeScript types consumed by the frontend/langchain-service
+yarn openapi:types
+
+# Or run both
+yarn openapi:sync
+```
+
+`OPENAPI_SOURCE` can be pointed at any environment (e.g., staging URL). The generated spec is stored in `docs/api/openapi.json` and the typed client lives in `src/types/api/generated.ts`.
 
 ---
 
@@ -550,7 +598,7 @@ const socket = useSocket("http://localhost:4000");
 ```
 
 **Message Handling**:
-- User types → `handleSendMessage()` → `socket.emit("sendMessage", text)`
+- User types → `handleSendMessage()` → `socket.emit("sendMessage", { text, token })`
 - Server responds → `socket.on("newMessage")` → `setMessages([...prev, msg])`
 
 ### Socket.io Server
@@ -589,7 +637,7 @@ User: "Get my account balance"
   ↓
 Agent thinks: "This requires backend data"
   ↓
-Agent calls: callJavaAPI("get account balance")
+Agent calls: call_java_api tool with "get account balance"
   ↓
 Tool returns: { balance: 1234 }
   ↓
@@ -656,7 +704,7 @@ export const getWeather = tool(
 ```typescript
 const agent = createAgent({
   model,
-  tools: [callJavaAPI, getWeather], // Add new tool
+  tools: [createCallJavaAPITool(authToken), getWeather],
 });
 ```
 
@@ -665,7 +713,7 @@ const agent = createAgent({
 ### Connecting to Java Backend
 
 **Current Setup**:
-- Tool already exists: `callJavaAPI`
+- Tool already exists: `call_java_api` (created via `createCallJavaAPITool`)
 - Calls: `http://localhost:8081/api/query`
 - Sends: `{ query: "user's question" }`
 

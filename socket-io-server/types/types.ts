@@ -5,8 +5,13 @@ export interface ServerToClientEvents {
   newMessage: (msg: Message) => void;
 }
 
+export type ClientMessagePayload = {
+  text: string;
+  token?: string;
+};
+
 export interface ClientToServerEvents {
-  sendMessage: (text: string) => void;
+  sendMessage: (payload: ClientMessagePayload) => void;
 }
 
 export interface InterServerEvents {
@@ -14,8 +19,10 @@ export interface InterServerEvents {
 }
 
 export interface SocketData {
-  name: string;
-  age: number;
+  auth?: {
+    token: string;
+    userId?: string;
+  };
 }
 
 

@@ -81,11 +81,12 @@ export function useNavData() {
         subheader: 'management',
         items: [
           {
-            title: 'user',
+            title: 'user management',
             path: paths.dashboard.group.root,
             icon: ICONS.user,
             children: [
               { title: 'account', path: paths.dashboard.group.account },
+              { title: 'manage users', path: paths.dashboard.group.manageUsers },
             ],
           },
         ],

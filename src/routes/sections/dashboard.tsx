@@ -73,6 +73,7 @@ export const dashboardRoutes = (flags: any) => {
             {element: <PageFour/>, index: true},
             {path: 'five', element: <PageFive/>},
             {path: 'account', element: <UserAccountPage/>},
+            {path: 'manage-users', element: <UserAccountPage/>},
           ],
         },
       ],
