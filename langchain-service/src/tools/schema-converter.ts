@@ -6,25 +6,24 @@ function convertSchema(schema: any, components: any, visited: Set<string> = new 
   if (!schema) return { type: 'string' };
 
   // Resolve $ref
-  let schemaName: string | null = null;
   if (schema.$ref) {
-    schemaName = schema.$ref.replace('#/components/schemas/', '');
-    
+    const schemaName = schema.$ref.replace('#/components/schemas/', '');
+
     // Check for circular reference
     if (visited.has(schemaName)) {
       // Return a simple object type to break the cycle
       return { type: 'object', description: `Reference to ${schemaName}` };
     }
-    
+
     visited.add(schemaName);
     schema = components?.schemas?.[schemaName] || { type: 'object' };
   }
 
   // Arrays
   if (schema.type === 'array') {
-    return { 
-      type: 'array', 
-      items: convertSchema(schema.items, components, visited) 
+    return {
+      type: 'array',
+      items: convertSchema(schema.items, components, visited)
     };
   }
 
@@ -67,9 +66,11 @@ export function buildToolSchemaFromOperation(operation: any, components?: any): 
     }
   }
 
+  // Ensure we always have at least an empty properties object
+  // Some models require properties to be present even if empty
   return {
     type: 'object',
-    properties,
+    properties: properties || {},
     ...(required.length > 0 && { required }),
   };
 }

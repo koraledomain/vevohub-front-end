@@ -6,7 +6,7 @@ import openapiSpec from "../../../docs/api/openapi.json";
 type OpenAPISpec = typeof openapiSpec;
 type Operation = any;
 
-const API_BASE_URL = "http://localhost:8081";
+const API_BASE_URL = "http://localhost:8080";
 
 /**
  * Replaces path parameters with actual values
@@ -31,6 +31,9 @@ function createToolHandler(
 ) {
   return traceable(
     async (input: unknown) => {
+      console.log(`[DEBUG] 🔧 TOOL EXECUTED: ${operation.operationId}`);
+      console.log(`[DEBUG] 🔧 Method: ${method.toUpperCase()}, Path: ${path}`);
+      console.log(`[DEBUG] 🔧 Input parameters:`, JSON.stringify(input, null, 2));
       try {
         const params = input as Record<string, any>;
         const pathParams: Record<string, any> = {};
@@ -87,6 +90,8 @@ function createToolHandler(
 
         const fullUrl = queryString ? `${url}?${queryString}` : url;
 
+        console.log(`[DEBUG] Making ${method.toUpperCase()} request to: ${fullUrl}`);
+
         // Prepare headers
         const headers: Record<string, string> = {
           "Content-Type": "application/json",
@@ -94,6 +99,9 @@ function createToolHandler(
 
         if (authToken) {
           headers.Authorization = `Bearer ${authToken}`;
+          console.log(`[DEBUG] Adding Authorization header to ${method.toUpperCase()} ${path}`);
+        } else {
+          console.log(`[WARN] No auth token provided for ${method.toUpperCase()} ${path} - request may fail if endpoint requires authentication`);
         }
 
         // Make the request
@@ -163,8 +171,26 @@ export function generateToolsFromOpenAPI(authToken?: string) {
       // Build tool schema from operation
       const toolSchema = buildToolSchemaFromOperation(op, components);
 
-      // Create tool description
-      const description = op.description || op.summary || `Execute ${op.operationId}`;
+      // Create tool description - make it more directive
+      const baseDescription = op.description || op.summary || `Execute ${op.operationId}`;
+      const methodUpper = method.toUpperCase();
+
+      // Enhance description to be more actionable
+      let description = baseDescription;
+
+      // Add directive prefix based on method
+      if (methodUpper === 'GET') {
+        description = `USE THIS TOOL to fetch/retrieve data from the API. ${baseDescription}`;
+      } else if (methodUpper === 'POST') {
+        description = `USE THIS TOOL to create new resources in the API. ${baseDescription}`;
+      } else if (methodUpper === 'PUT' || methodUpper === 'PATCH') {
+        description = `USE THIS TOOL to update existing resources in the API. ${baseDescription}`;
+      } else if (methodUpper === 'DELETE') {
+        description = `USE THIS TOOL to delete resources from the API. ${baseDescription}`;
+      }
+
+      // Add path context for better tool selection
+      description += ` Endpoint: ${methodUpper} ${path}`;
 
       // Create the tool
       const langchainTool = tool(

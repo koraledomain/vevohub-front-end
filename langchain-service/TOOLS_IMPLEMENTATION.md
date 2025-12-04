@@ -4,6 +4,8 @@
 
 This document describes the implementation of automatic tool generation from OpenAPI specification for the LangChain service. Instead of using a single generic tool, the system now generates specific tools for each API endpoint defined in the OpenAPI spec.
 
+> **⚠️ Important:** See [TOOL_CALLING_GUIDE.md](./TOOL_CALLING_GUIDE.md) for information about the current limitations with function calling and how to work with tools that require parameters.
+
 ## What Changed
 
 ### Before
@@ -184,7 +186,277 @@ Each tool has:
 
 ## Testing
 
-See the testing section below for detailed instructions on how to test the implementation.
+### Prerequisites
+
+1. **Start the Java API** (must be running on `http://localhost:8081`)
+2. **Start the LangChain service**:
+   ```bash
+   cd langchain-service
+   npm run dev
+   # or
+   yarn dev
+   ```
+   The service will run on `http://localhost:3001`
+
+3. **Set up environment variables** (if needed):
+   - `NVIDIA_API_KEY` - Required for the AI model
+
+### Testing Methods
+
+#### Method 1: Using cURL
+
+**Basic request (no authentication)**:
+```bash
+curl -X POST http://localhost:3001/agent \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Get all candidates"}'
+```
+
+**With authentication token**:
+```bash
+curl -X POST http://localhost:3001/agent \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{"message": "Find candidate with ID abc-123-def"}'
+```
+
+#### Method 2: Using a REST Client (Postman, Insomnia, etc.)
+
+- **URL**: `POST http://localhost:3001/agent`
+- **Headers**:
+  - `Content-Type: application/json`
+  - `Authorization: Bearer YOUR_JWT_TOKEN` (optional)
+- **Body**:
+  ```json
+  {
+    "message": "Your natural language query here"
+  }
+  ```
+
+### Test Prompts by Category
+
+#### 1. Candidate Operations
+
+**Get all candidates**:
+```
+Get all candidates
+```
+or
+```
+Show me all candidates in the system
+```
+
+**Get candidates with filters**:
+```
+Get candidates with profile "Software Engineer"
+```
+or
+```
+Find candidates named "John Doe"
+```
+
+**Get candidate by ID**:
+```
+Find candidate with ID abc-123-def-456
+```
+or
+```
+Get details for candidate abc-123-def-456
+```
+
+**Get available profiles/positions**:
+```
+What candidate profiles are available?
+```
+or
+```
+List all candidate positions
+```
+
+**Create a candidate**:
+```
+Create a new candidate named John Doe with profile Software Engineer
+```
+
+**Delete a candidate**:
+```
+Delete candidate with ID abc-123-def-456
+```
+
+#### 2. User Operations
+
+**Get user by ID**:
+```
+Get user details for ID abc-123-def-456
+```
+
+**Get user by email**:
+```
+Find user with email john@example.com
+```
+
+**Get users for a tenant**:
+```
+Get all users for tenant abc-123-def-456
+```
+
+**Create a user**:
+```
+Create a new user with email john@example.com and password SecurePass123!
+```
+
+**Update a user**:
+```
+Update user abc-123-def-456 with new information
+```
+
+**Delete a user**:
+```
+Delete user with ID abc-123-def-456
+```
+
+#### 3. Authentication Operations
+
+**Login**:
+```
+Login with email john@example.com and password mypassword
+```
+
+**Register**:
+```
+Register a new user with email john@example.com and password SecurePass123!
+```
+
+#### 4. Tenant Operations
+
+**Get current tenant**:
+```
+What is the current tenant?
+```
+
+**Create a tenant**:
+```
+Create a new tenant named Acme Corp with subdomain acme
+```
+
+**Delete a tenant**:
+```
+Delete tenant with ID abc-123-def-456
+```
+
+#### 5. Query Operations
+
+**Execute a query**:
+```
+Execute query: Get all candidates with Java experience
+```
+or
+```
+Query: Find users in the Engineering department
+```
+
+#### 6. File Operations
+
+**Upload a file**:
+```
+Upload a file of type resume
+```
+
+#### 7. AI Filter Operations
+
+**Filter candidates**:
+```
+Filter candidates with prompt: Find candidates with 5+ years of experience
+```
+
+### Expected Behavior
+
+1. **Tool Selection**: The AI should automatically select the appropriate tool based on your query
+   - Example: "Get all candidates" → uses `getCandidates` tool
+   - Example: "Find candidate with ID 123" → uses `findCandidateById` tool
+
+2. **Debug Logs**: Check the console output for:
+   ```
+   [DEBUG] Starting handleUserInput with: <your message>
+   [DEBUG] Generating tools from OpenAPI spec...
+   [DEBUG] Generated X tools from OpenAPI spec
+   [DEBUG] Invoking agent...
+   [DEBUG] Agent response received
+   ```
+
+3. **Response Format**: The response will be a JSON object:
+   ```json
+   {
+     "response": "The AI's response based on the API data"
+   }
+   ```
+
+### Testing Checklist
+
+- [ ] Service starts without errors
+- [ ] Tools are generated (check console log for number of tools)
+- [ ] GET operations work (e.g., getCandidates, getUsers)
+- [ ] GET with path parameters works (e.g., findCandidateById)
+- [ ] GET with query parameters works (e.g., getCandidates with filters)
+- [ ] POST operations work (e.g., createUser, createCandidate)
+- [ ] POST with request body works correctly
+- [ ] Authentication token is passed correctly (if provided)
+- [ ] Error handling works (test with invalid IDs, missing parameters)
+- [ ] Circular reference handling works (no stack overflow errors)
+
+### Common Test Scenarios
+
+**Scenario 1: Simple GET request**
+```
+Prompt: "Get all candidates"
+Expected: AI uses getCandidates tool, returns list of candidates
+```
+
+**Scenario 2: GET with path parameter**
+```
+Prompt: "Find candidate with ID 123e4567-e89b-12d3-a456-426614174000"
+Expected: AI uses findCandidateById tool with id parameter
+```
+
+**Scenario 3: GET with query parameters**
+```
+Prompt: "Get candidates with profile Software Engineer"
+Expected: AI uses getCandidates tool with profiles query parameter
+```
+
+**Scenario 4: POST with request body**
+```
+Prompt: "Create a user with email test@example.com and password Test123!"
+Expected: AI uses createUser tool with email and password in body
+```
+
+**Scenario 5: Complex query**
+```
+Prompt: "Get all candidates, then find the one with ID 123"
+Expected: AI uses multiple tools in sequence
+```
+
+### Troubleshooting Test Issues
+
+**No response or timeout**:
+- Check that Java API is running on port 8081
+- Verify `API_BASE_URL` in `openapi-generator.ts` is correct
+- Check network connectivity
+
+**Authentication errors**:
+- Verify JWT token is valid
+- Check token format: `Bearer <token>`
+- Ensure token hasn't expired
+
+**Wrong tool selected**:
+- Check tool descriptions in OpenAPI spec
+- Verify `operationId` is descriptive
+- Try more specific prompts
+
+**Schema conversion errors**:
+- Check console for circular reference warnings
+- Verify OpenAPI spec is valid JSON
+- Check for missing `operationId` warnings
 
 ## Troubleshooting
 
@@ -242,4 +514,10 @@ This allows the schema conversion to complete successfully while still providing
 4. **Error Handling**: Improve error messages and retry logic
 5. **Streaming**: Support streaming responses for long-running operations
 6. **Circular Reference Handling**: Improve handling of circular references (e.g., show nested structure up to a certain depth)
+7. **Parameter Extraction**: Implement automatic parameter extraction from user queries (see [TOOL_CALLING_GUIDE.md](./TOOL_CALLING_GUIDE.md))
+8. **Model Upgrade**: Switch to a model that properly supports function calling
+
+## Related Documentation
+
+- **[TOOL_CALLING_GUIDE.md](./TOOL_CALLING_GUIDE.md)**: Comprehensive guide on working with tools, current limitations, and how to handle different tool types
 

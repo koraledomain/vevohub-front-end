@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express from "express";
 import cors from "cors";
-import {handleUserInput} from "./agent";
+import { handleUserInput } from "./agent";
 
 const app = express();
 const PORT = 3001;
@@ -12,13 +12,13 @@ app.use(express.json()); // Parse JSON request bodies
 
 // Health check endpoint
 app.get("/health", (req, res) => {
-  res.status(200).json({status: "ok", service: "langchain-service"});
+  res.status(200).json({ status: "ok", service: "langchain-service" });
 });
 
 // Main agent endpoint
 app.post("/agent", async (req, res) => {
   try {
-    const {message} = req.body;
+    const { message } = req.body;
 
     // Validate request body
     if (!message || typeof message !== "string") {
@@ -38,8 +38,15 @@ app.post("/agent", async (req, res) => {
       ? authHeader.slice("Bearer ".length).trim()
       : undefined;
 
+    // Debug logging for auth token
+    if (tokenMatch) {
+      console.log("[DEBUG] Auth token received:", tokenMatch.substring(0, 20) + "...");
+    } else {
+      console.log("[DEBUG] No auth token provided in request");
+    }
+
     // Process the message through the agent
-    const response = await handleUserInput(message, {authToken: tokenMatch});
+    const response = await handleUserInput(message, { authToken: tokenMatch });
 
     // Return the AI response
     res.json({
