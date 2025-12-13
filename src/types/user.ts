@@ -1,4 +1,4 @@
-import {CustomFile} from 'src/components/upload';
+import { CustomFile } from 'src/components/upload';
 
 // ----------------------------------------------------------------------
 
@@ -146,3 +146,23 @@ export type IUserAccountChangePassword = {
   newPassword: string;
   confirmPassword: string;
 };
+
+// ----------------------------------------------------------------------
+
+export type IUserManagementItem = {
+  id: string;
+  fullName: string;
+  email: string;
+  location: string;
+  joined: Date | string;
+  permissions: 'Admin' | 'Viewer' | 'Master Admin';
+  avatarUrl?: string;
+};
+
+export type IUserManagementTableFilters = {
+  search: string;
+  joined: string; // 'Anytime' or date range
+  permissions: string; // 'All' or specific permission
+};
+
+export type IUserManagementTableFilterValue = string;

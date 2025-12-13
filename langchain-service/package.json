@@ -1,0 +1,31 @@
+{
+  "name": "langchain-service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@langchain/core": "^1.0.0-alpha.7",
+    "@langchain/langgraph": "^1.0.2",
+    "@langchain/openai": "^1.1.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.18.2",
+    "langchain": "^1.0.0-alpha.9",
+    "langsmith": "^0.3.81",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.21",
+    "@types/node": "^24.10.1",
+    "tsx": "^4.15.7",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "dev": "tsx watch --clear-screen=false src/server.ts",
+    "dev:debug": "NODE_OPTIONS='--inspect=0.0.0.0:9229' tsx watch --clear-screen=false src/server.ts",
+    "debug:simple": "NODE_OPTIONS='--inspect-brk=0.0.0.0:9229' tsx src/server.ts",
+    "start": "tsx src/server.ts",
+    "build": "tsc"
+  }
+}

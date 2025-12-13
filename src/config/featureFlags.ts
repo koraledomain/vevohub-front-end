@@ -1,5 +1,5 @@
 export const featureFlags = {
-  login: false,
+  login: true,
   profilesPage: false,
 } as const;
 

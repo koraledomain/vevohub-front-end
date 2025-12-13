@@ -65,42 +65,29 @@ export default function Header() {
                 right: -16,
               },
             }}
-            badgeContent={
-              <Link
-                href={paths.changelog}
-                target="_blank"
-                rel="noopener"
-                underline="none"
-                sx={{ml: 1}}
-              >
-                <Label color="info" sx={{textTransform: 'unset', height: 22, px: 0.5}}>
-                  v5.7.0
-                </Label>
-              </Link>
-            }
           >
             <Logo/>
           </Badge>
 
-          <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{flexGrow: 1}}/>
 
-          {mdUp && <NavDesktop data={navConfig} />}
+          {mdUp && <NavDesktop data={navConfig}/>}
 
-          <Stack alignItems="center" direction={{ xs: 'row', md: 'row-reverse' }}>
+          <Stack alignItems="center" direction={{xs: 'row', md: 'row-reverse'}}>
             {/* <Button variant="contained" target="_blank" rel="noopener" href={paths.minimalUI}> */}
             {/*  Purchase Now */}
             {/* </Button> */}
 
-            {mdUp && <LoginButton />}
+            {mdUp && <LoginButton/>}
 
             <SettingsButton
               sx={{
-                ml: { xs: 1, md: 0 },
-                mr: { md: 2 },
+                ml: {xs: 1, md: 0},
+                mr: {md: 2},
               }}
             />
 
-            {!mdUp && <NavMobile data={navConfig} />}
+            {!mdUp && <NavMobile data={navConfig}/>}
           </Stack>
         </Container>
       </Toolbar>

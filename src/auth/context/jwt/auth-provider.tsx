@@ -1,8 +1,7 @@
-import axios from 'axios';
-import {useMemo, useEffect, useReducer, useCallback} from 'react';
+import {useMemo, useEffect, useReducer, useCallback, useRef} from 'react';
 
 import {AuthContext} from './auth-context';
-import axiosInstance, {endpoints} from '../../../utils/axios';
+import api, {endpoints} from '../../../utils/api';
 import {setSession, isValidToken, getAccountId} from './utils';
 import {AuthUserType, ActionMapType, AuthStateType} from '../../types';
 
@@ -81,23 +80,22 @@ type Props = {
 
 export function AuthProvider({children}: Props) {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const initializedRef = useRef(false);
 
   const initialize = useCallback(async () => {
+    // Only run initialize once on mount
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+
     try {
       const accessToken = sessionStorage.getItem(STORAGE_KEY);
 
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
-
-        const res = await axios.get(endpoints.auth.me);
-
-        const {user} = res.data;
-
         dispatch({
           type: Types.INITIAL,
           payload: {
             user: {
-              ...user,
               accessToken,
             },
           },
@@ -112,6 +110,8 @@ export function AuthProvider({children}: Props) {
       }
     } catch (error) {
       console.error(error);
+      // If initialize fails, just set user to null and loading to false
+      // This only runs once on mount, so it won't interfere with login
       dispatch({
         type: Types.INITIAL,
         payload: {
@@ -132,17 +132,36 @@ export function AuthProvider({children}: Props) {
       password,
     };
 
-    const res = await axiosInstance.post(endpoints.auth.login, data);
-    const {accessToken, redirectURL, domain} = res.data;
+    const res = await api.post(endpoints.auth.login, data);
+    const {accessToken, redirectURL, domain} = res;
     setSession(accessToken);
     const finalURL = redirectURL ?? domain;
-    if (finalURL && finalURL !== window.location.origin) {
-      window.location.href = finalURL;
-      return;
+    
+    // Only redirect if it's a completely different domain (not a subdomain)
+    // This prevents redirecting to subdomains like test-this2.localhost during development
+    if (finalURL) {
+      try {
+        const currentOrigin = new URL(window.location.origin);
+        const redirectOrigin = new URL(finalURL);
+        
+        // Don't redirect if:
+        // 1. It's the same origin
+        // 2. It's a localhost subdomain (for development)
+        const isLocalhostSubdomain = 
+          currentOrigin.hostname === 'localhost' && 
+          redirectOrigin.hostname.includes('localhost') &&
+          redirectOrigin.hostname !== 'localhost';
+        
+        if (finalURL !== window.location.origin && !isLocalhostSubdomain) {
+          window.location.href = finalURL;
+          return;
+        }
+      } catch {
+        // If URL parsing fails, ignore the redirect
+      }
     }
-    const response = await axiosInstance.get(`/users/${getAccountId()}`);
-    const user = response.data;
-
+    const response = await api.get(`/users/${getAccountId()}`);
+    const {user} = response;
 
     dispatch({
       type: Types.LOGIN,
@@ -166,13 +185,13 @@ export function AuthProvider({children}: Props) {
       };
 
 
-      const res = await axiosInstance.post(endpoints.auth.register, data);
-      const { user } = res.data;
-      let { accessToken, redirectURL, domain } = res.data;
+      const res = await api.post(endpoints.auth.register, data);
+      const { user } = res;
+      let { accessToken, redirectURL, domain } = res;
 
       if (!accessToken) {
-        const resLogin = await axiosInstance.post(endpoints.auth.login, {email, password});
-        const { accessToken: loginAccessToken, redirectURL: loginRedirectURL, domain: loginDomain } = resLogin.data;
+        const resLogin = await api.post(endpoints.auth.login, {email, password});
+        const { accessToken: loginAccessToken, redirectURL: loginRedirectURL, domain: loginDomain } = resLogin;
         accessToken = loginAccessToken;
         if (!redirectURL) {
           redirectURL = loginRedirectURL;
@@ -186,9 +205,29 @@ export function AuthProvider({children}: Props) {
       setSession(accessToken);
 
       const finalURL = redirectURL ?? domain;
-      if (finalURL && finalURL !== window.location.origin) {
-        window.location.href = finalURL;
-        return;
+      
+      // Only redirect if it's a completely different domain (not a subdomain)
+      // This prevents redirecting to subdomains like test-this2.localhost during development
+      if (finalURL) {
+        try {
+          const currentOrigin = new URL(window.location.origin);
+          const redirectOrigin = new URL(finalURL);
+          
+          // Don't redirect if:
+          // 1. It's the same origin
+          // 2. It's a localhost subdomain (for development)
+          const isLocalhostSubdomain = 
+            currentOrigin.hostname === 'localhost' && 
+            redirectOrigin.hostname.includes('localhost') &&
+            redirectOrigin.hostname !== 'localhost';
+          
+          if (finalURL !== window.location.origin && !isLocalhostSubdomain) {
+            window.location.href = finalURL;
+            return;
+          }
+        } catch {
+          // If URL parsing fails, ignore the redirect
+        }
       }
 
       dispatch({

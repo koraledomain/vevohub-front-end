@@ -10,6 +10,7 @@ import Header from './header';
 import NavMini from './nav-mini';
 import NavVertical from './nav-vertical';
 import NavHorizontal from './nav-horizontal';
+import ChatWidget from 'src/components/chat-widget';
 
 // ----------------------------------------------------------------------
 
@@ -42,6 +43,8 @@ export default function DashboardLayout({ children }: Props) {
         {lgUp ? renderHorizontal : renderNavVertical}
 
         <Main>{children}</Main>
+        
+        <ChatWidget />
       </>
     );
   }
@@ -62,6 +65,8 @@ export default function DashboardLayout({ children }: Props) {
 
           <Main>{children}</Main>
         </Box>
+        
+        <ChatWidget />
       </>
     );
   }
@@ -81,6 +86,8 @@ export default function DashboardLayout({ children }: Props) {
 
         <Main>{children}</Main>
       </Box>
+      
+      <ChatWidget />
     </>
   );
 }
